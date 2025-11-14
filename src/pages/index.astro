@@ -1,11 +1,412 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 ---
 
-<Layout>
-	<Welcome />
+<Layout title="Manolia Kocaoglu - Designer Creative">
+	<!-- Grille de fond -->
+	<div class="grid-bg"></div>
+	
+	<!-- Éléments décoratifs pixelisés -->
+	<div class="pixel-decorations">
+		<div class="pixel-shape" style="top: 10%; left: 5%;"></div>
+		<div class="pixel-shape" style="top: 20%; left: 20%;"></div>
+		<div class="pixel-shape" style="top: 30%; right: 5%;"></div>
+		<div class="pixel-shape" style="top: 50%; left: 10%;"></div>
+		<div class="pixel-shape" style="bottom: 20%; right: 15%;"></div>
+		<div class="pixel-shape" style="bottom: 30%; left: 15%;"></div>
+		<div class="pixel-cross" style="top: 15%; right: 20%;"></div>
+		<div class="pixel-cross" style="bottom: 15%; left: 20%;"></div>
+		<div class="pixel-plus" style="top: 40%; right: 10%;"></div>
+		<div class="pixel-plus" style="bottom: 40%; left: 5%;"></div>
+	</div>
+
+	<div class="container">
+		<!-- Header -->
+		<header>
+			<div class="logo">⌂</div>
+			<h1>DESIGNER CREATIVE</h1>
+			<p class="subtitle">Joueur: Manolia Kocaoglu</p>
+		</header>
+
+		<!-- Zone principale -->
+		<main class="main-content">
+			<!-- Personnage central avec contrôles -->
+			<div class="character-section">
+				<!-- Flèches autour du personnage -->
+				<button class="arrow-btn arrow-top" id="arrowTop">
+					<svg viewBox="0 0 50 50" width="50" height="50">
+						<polygon points="10,35 25,15 40,35" fill="white"/>
+					</svg>
+				</button>
+				
+				<button class="arrow-btn arrow-left" id="arrowLeft">
+					<svg viewBox="0 0 50 50" width="60" height="60">
+						<polygon points="35,10 15,25 35,40" fill="white"/>
+					</svg>
+				</button>
+
+				<!-- Personnage principal -->
+				<div class="character-wrapper">
+					<img src="/manolia.svg" alt="Manolia Kocaoglu" class="character" id="character">
+				</div>
+
+				<button class="arrow-btn arrow-right" id="arrowRight">
+					<svg viewBox="0 0 50 50" width="60" height="60">
+						<polygon points="15,10 35,25 15,40" fill="white"/>
+					</svg>
+				</button>
+
+				<button class="arrow-btn arrow-bottom" id="arrowBottom">
+					<svg viewBox="0 0 50 50" width="50" height="50">
+						<polygon points="10,15 25,35 40,15" fill="white"/>
+					</svg>
+				</button>
+
+				<!-- Plateforme sous le perso -->
+				<div class="platform"></div>
+			</div>
+
+			<!-- Menu navigation à droite -->
+			<nav class="menu">
+				<a href="#accueil" class="menu-item">
+					<div class="avatar-mini">
+						<img src="/manolia.svg" alt="icon">
+					</div>
+					<span>Accueil</span>
+				</a>
+				<a href="#portfolio" class="menu-item">
+					<span>Portfolio</span>
+				</a>
+				<a href="#apropos" class="menu-item">
+					<span>À propos</span>
+				</a>
+				<a href="#contact" class="menu-item">
+					<span>Contact</span>
+				</a>
+			</nav>
+		</main>
+	</div>
 </Layout>
+
+<style>
+	:global(body) {
+		background: #1a237e;
+		margin: 0;
+		padding: 0;
+		overflow-x: hidden;
+	}
+
+	/* Grille de fond */
+	.grid-bg {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-image: 
+			linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+			linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+		background-size: 50px 50px;
+		z-index: 0;
+	}
+
+	/* Décorations pixelisées */
+	.pixel-decorations {
+		position: fixed;
+		width: 100%;
+		height: 100%;
+		top: 0;
+		left: 0;
+		z-index: 1;
+		pointer-events: none;
+	}
+
+	.pixel-shape {
+		position: absolute;
+		width: 20px;
+		height: 20px;
+		background: rgba(255, 255, 255, 0.1);
+		animation: float 3s ease-in-out infinite;
+	}
+
+	.pixel-cross {
+		position: absolute;
+		width: 16px;
+		height: 16px;
+		background: 
+			linear-gradient(rgba(255,255,255,0.15) 6px, transparent 6px, transparent 10px, rgba(255,255,255,0.15) 10px),
+			linear-gradient(90deg, rgba(255,255,255,0.15) 6px, transparent 6px, transparent 10px, rgba(255,255,255,0.15) 10px);
+		animation: float 4s ease-in-out infinite;
+		animation-delay: 1s;
+	}
+
+	.pixel-plus {
+		position: absolute;
+		width: 12px;
+		height: 12px;
+		background: rgba(255,255,255,0.1);
+		clip-path: polygon(
+			40% 0%, 60% 0%, 60% 40%, 100% 40%, 
+			100% 60%, 60% 60%, 60% 100%, 40% 100%, 
+			40% 60%, 0% 60%, 0% 40%, 40% 40%
+		);
+		animation: float 3.5s ease-in-out infinite;
+		animation-delay: 2s;
+	}
+
+	@keyframes float {
+		0%, 100% { transform: translateY(0); opacity: 0.6; }
+		50% { transform: translateY(-15px); opacity: 1; }
+	}
+
+	/* Container principal */
+	.container {
+		position: relative;
+		z-index: 2;
+		min-height: 100vh;
+		padding: 40px;
+	}
+
+	/* Header */
+	header {
+		text-align: center;
+		margin-bottom: 60px;
+	}
+
+	.logo {
+		font-size: 3rem;
+		color: white;
+		margin-bottom: 10px;
+	}
+
+	h1 {
+		font-size: clamp(2rem, 6vw, 4rem);
+		color: white;
+		text-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+		letter-spacing: 8px;
+		margin: 20px 0;
+	}
+
+	.subtitle {
+		font-size: clamp(0.9rem, 2vw, 1.2rem);
+		color: white;
+		margin-top: 20px;
+	}
+
+	/* Zone principale */
+	.main-content {
+		display: grid;
+		grid-template-columns: 1.5fr 1fr;
+		gap: 80px;
+		align-items: center;
+		max-width: 1400px;
+		margin: 0 auto;
+	}
+
+	/* Section personnage */
+	.character-section {
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 600px;
+	}
+
+	.character-wrapper {
+		position: relative;
+		z-index: 3;
+	}
+
+	.character {
+		width: 400px;
+		height: auto;
+		filter: drop-shadow(0 20px 40px rgba(0,0,0,0.5));
+		animation: idle 3s ease-in-out infinite;
+		transition: transform 0.5s ease;
+	}
+
+	@keyframes idle {
+		0%, 100% { transform: translateY(0); }
+		50% { transform: translateY(-20px); }
+	}
+
+	.platform {
+		position: absolute;
+		bottom: 20px;
+		width: 400px;
+		height: 60px;
+		background: radial-gradient(ellipse, rgba(13, 27, 62, 0.8) 0%, transparent 70%);
+		border-radius: 50%;
+		filter: blur(20px);
+		z-index: 2;
+	}
+
+	/* Flèches de contrôle */
+	.arrow-btn {
+		position: absolute;
+		background: transparent;
+		border: none;
+		cursor: pointer;
+		transition: all 0.3s;
+		z-index: 4;
+		filter: drop-shadow(0 0 10px rgba(255,255,255,0.5));
+	}
+
+	.arrow-btn:hover {
+		transform: scale(1.2);
+		filter: drop-shadow(0 0 20px rgba(255,255,255,0.8));
+	}
+
+	.arrow-top {
+		top: 20px;
+		left: 50%;
+		transform: translateX(-50%);
+	}
+
+	.arrow-bottom {
+		bottom: 100px;
+		left: 50%;
+		transform: translateX(-50%);
+	}
+
+	.arrow-left {
+		left: 50px;
+		top: 50%;
+		transform: translateY(-50%);
+	}
+
+	.arrow-right {
+		right: 50px;
+		top: 50%;
+		transform: translateY(-50%);
+	}
+
+	/* Menu navigation */
+	.menu {
+		display: flex;
+		flex-direction: column;
+		gap: 30px;
+		padding: 40px;
+	}
+
+	.menu-item {
+		display: flex;
+		align-items: center;
+		gap: 15px;
+		color: white;
+		text-decoration: none;
+		font-size: clamp(1.2rem, 2vw, 1.8rem);
+		transition: all 0.3s;
+		padding: 10px 0;
+	}
+
+	.menu-item:hover {
+		transform: translateX(10px);
+		color: #ffd700;
+	}
+
+	.avatar-mini {
+		width: 60px;
+		height: 60px;
+		border-radius: 50%;
+		border: 3px solid white;
+		overflow: hidden;
+		background: white;
+	}
+
+	.avatar-mini img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	/* Responsive */
+	@media (max-width: 1024px) {
+		.main-content {
+			grid-template-columns: 1fr;
+			gap: 40px;
+		}
+
+		.menu {
+			flex-direction: row;
+			justify-content: center;
+			flex-wrap: wrap;
+			padding: 20px;
+		}
+
+		.character {
+			width: 300px;
+		}
+
+		.arrow-left {
+			left: 20px;
+		}
+
+		.arrow-right {
+			right: 20px;
+		}
+	}
+
+	@media (max-width: 640px) {
+		h1 {
+			font-size: 1.5rem;
+			letter-spacing: 4px;
+		}
+
+		.character {
+			width: 250px;
+		}
+
+		.arrow-btn {
+			width: 40px;
+			height: 40px;
+		}
+
+		.menu-item {
+			font-size: 1rem;
+		}
+	}
+</style>
+
+<script>
+	let rotation = 0;
+	let currentView = 0; // 0: face, 1: droite, 2: dos, 3: gauche
+	const char = document.getElementById('character');
+
+	document.getElementById('arrowLeft')?.addEventListener('click', () => {
+		rotation -= 90;
+		currentView = (currentView - 1 + 4) % 4;
+		updateCharacter();
+	});
+
+	document.getElementById('arrowRight')?.addEventListener('click', () => {
+		rotation += 90;
+		currentView = (currentView + 1) % 4;
+		updateCharacter();
+	});
+
+	document.getElementById('arrowTop')?.addEventListener('click', () => {
+		// Zoom in
+		if (char) {
+			const currentScale = parseFloat(char.style.transform?.match(/scale\(([\d.]+)\)/)?.[1] || '1');
+			const newScale = Math.min(currentScale + 0.2, 2);
+			char.style.transform = `rotate(${rotation}deg) scale(${newScale})`;
+		}
+	});
+
+	document.getElementById('arrowBottom')?.addEventListener('click', () => {
+		// Zoom out
+		if (char) {
+			const currentScale = parseFloat(char.style.transform?.match(/scale\(([\d.]+)\)/)?.[1] || '1');
+			const newScale = Math.max(currentScale - 0.2, 0.5);
+			char.style.transform = `rotate(${rotation}deg) scale(${newScale})`;
+		}
+	});
+
+	function updateCharacter() {
+		if (char) {
+			const currentScale = parseFloat(char.style.transform?.match(/scale\(([\d.]+)\)/)?.[1] || '1');
+			char.style.transform = `rotate(${rotation}deg) scale(${currentScale})`;
+		}
+	}
+</script>
