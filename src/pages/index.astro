@@ -33,13 +33,13 @@ import Layout from '../layouts/Layout.astro';
 			<!-- Personnage central avec contrôles -->
 			<div class="character-section">
 				<!-- Flèches autour du personnage -->
-				<button class="arrow-btn arrow-top" id="arrowTop">
+				<button class="arrow-btn arrow-top" id="arrowTop" title="Changer couleur cheveux">
 					<svg viewBox="0 0 50 50" width="50" height="50">
 						<polygon points="10,35 25,15 40,35" fill="white"/>
 					</svg>
 				</button>
 				
-				<button class="arrow-btn arrow-left" id="arrowLeft">
+				<button class="arrow-btn arrow-left" id="arrowLeft" title="Couleur précédente hoodie">
 					<svg viewBox="0 0 50 50" width="60" height="60">
 						<polygon points="35,10 15,25 35,40" fill="white"/>
 					</svg>
@@ -47,16 +47,16 @@ import Layout from '../layouts/Layout.astro';
 
 				<!-- Personnage principal -->
 				<div class="character-wrapper">
-					<img src="/manolia.svg" alt="Manolia Kocaoglu" class="character" id="character">
+					<div id="character" class="character"></div>
 				</div>
 
-				<button class="arrow-btn arrow-right" id="arrowRight">
+				<button class="arrow-btn arrow-right" id="arrowRight" title="Couleur suivante hoodie">
 					<svg viewBox="0 0 50 50" width="60" height="60">
 						<polygon points="15,10 35,25 15,40" fill="white"/>
 					</svg>
 				</button>
 
-				<button class="arrow-btn arrow-bottom" id="arrowBottom">
+				<button class="arrow-btn arrow-bottom" id="arrowBottom" title="Changer couleur cheveux">
 					<svg viewBox="0 0 50 50" width="50" height="50">
 						<polygon points="10,15 25,35 40,15" fill="white"/>
 					</svg>
@@ -68,19 +68,21 @@ import Layout from '../layouts/Layout.astro';
 
 			<!-- Menu navigation à droite -->
 			<nav class="menu">
-				<a href="#accueil" class="menu-item">
-					<div class="avatar-mini">
-						<img src="/manolia.svg" alt="icon">
-					</div>
+				<!-- Avatar tête qui se déplace -->
+				<div class="menu-avatar" id="menuAvatar">
+					<div id="avatar-head-svg"></div>
+				</div>
+
+				<a href="#accueil" class="menu-item" data-menu-index="0">
 					<span>Accueil</span>
 				</a>
-				<a href="#portfolio" class="menu-item">
+				<a href="#portfolio" class="menu-item" data-menu-index="1">
 					<span>Portfolio</span>
 				</a>
-				<a href="#apropos" class="menu-item">
+				<a href="#apropos" class="menu-item" data-menu-index="2">
 					<span>À propos</span>
 				</a>
-				<a href="#contact" class="menu-item">
+				<a href="#contact" class="menu-item" data-menu-index="3">
 					<span>Contact</span>
 				</a>
 			</nav>
@@ -96,7 +98,6 @@ import Layout from '../layouts/Layout.astro';
 		overflow-x: hidden;
 	}
 
-	/* Grille de fond */
 	.grid-bg {
 		position: fixed;
 		top: 0;
@@ -110,7 +111,6 @@ import Layout from '../layouts/Layout.astro';
 		z-index: 0;
 	}
 
-	/* Décorations pixelisées */
 	.pixel-decorations {
 		position: fixed;
 		width: 100%;
@@ -159,7 +159,6 @@ import Layout from '../layouts/Layout.astro';
 		50% { transform: translateY(-15px); opacity: 1; }
 	}
 
-	/* Container principal */
 	.container {
 		position: relative;
 		z-index: 2;
@@ -167,7 +166,6 @@ import Layout from '../layouts/Layout.astro';
 		padding: 40px;
 	}
 
-	/* Header */
 	header {
 		text-align: center;
 		margin-bottom: 60px;
@@ -193,7 +191,6 @@ import Layout from '../layouts/Layout.astro';
 		margin-top: 20px;
 	}
 
-	/* Zone principale */
 	.main-content {
 		display: grid;
 		grid-template-columns: 1.5fr 1fr;
@@ -203,7 +200,6 @@ import Layout from '../layouts/Layout.astro';
 		margin: 0 auto;
 	}
 
-	/* Section personnage */
 	.character-section {
 		position: relative;
 		display: flex;
@@ -219,7 +215,7 @@ import Layout from '../layouts/Layout.astro';
 
 	.character {
 		width: 400px;
-		height: auto;
+		height: 600px;
 		filter: drop-shadow(0 20px 40px rgba(0,0,0,0.5));
 		animation: idle 3s ease-in-out infinite;
 		transition: transform 0.5s ease;
@@ -241,7 +237,6 @@ import Layout from '../layouts/Layout.astro';
 		z-index: 2;
 	}
 
-	/* Flèches de contrôle */
 	.arrow-btn {
 		position: absolute;
 		background: transparent;
@@ -281,23 +276,45 @@ import Layout from '../layouts/Layout.astro';
 		transform: translateY(-50%);
 	}
 
-	/* Menu navigation */
 	.menu {
+		position: relative;
 		display: flex;
 		flex-direction: column;
 		gap: 30px;
 		padding: 40px;
 	}
 
+	.menu-avatar {
+		position: absolute;
+		left: -80px;
+		top: 0;
+		width: 70px;
+		height: 70px;
+		border-radius: 50%;
+		border: 3px solid white;
+		overflow: hidden;
+		background: white;
+		transition: top 0.3s ease;
+		z-index: 10;
+		pointer-events: none;
+	}
+
+	#avatar-head-svg {
+		width: 100%;
+		height: 100%;
+		transform: scale(1.5);
+		transform-origin: center top;
+	}
+
 	.menu-item {
 		display: flex;
 		align-items: center;
-		gap: 15px;
 		color: white;
 		text-decoration: none;
 		font-size: clamp(1.2rem, 2vw, 1.8rem);
 		transition: all 0.3s;
 		padding: 10px 0;
+		position: relative;
 	}
 
 	.menu-item:hover {
@@ -305,22 +322,6 @@ import Layout from '../layouts/Layout.astro';
 		color: #ffd700;
 	}
 
-	.avatar-mini {
-		width: 60px;
-		height: 60px;
-		border-radius: 50%;
-		border: 3px solid white;
-		overflow: hidden;
-		background: white;
-	}
-
-	.avatar-mini img {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-	}
-
-	/* Responsive */
 	@media (max-width: 1024px) {
 		.main-content {
 			grid-template-columns: 1fr;
@@ -334,8 +335,13 @@ import Layout from '../layouts/Layout.astro';
 			padding: 20px;
 		}
 
+		.menu-avatar {
+			display: none;
+		}
+
 		.character {
 			width: 300px;
+			height: 450px;
 		}
 
 		.arrow-left {
@@ -355,6 +361,7 @@ import Layout from '../layouts/Layout.astro';
 
 		.character {
 			width: 250px;
+			height: 375px;
 		}
 
 		.arrow-btn {
@@ -369,44 +376,120 @@ import Layout from '../layouts/Layout.astro';
 </style>
 
 <script>
-	let rotation = 0;
-	let currentView = 0; // 0: face, 1: droite, 2: dos, 3: gauche
-	const char = document.getElementById('character');
+	// Palettes de couleurs disponibles
+	const hoodieColors = [
+		'#446eb6', // bleu original
+		'#FF6B6B', // rouge
+		'#4ECDC4', // cyan
+		'#95E1D3', // vert pastel
+		'#2C3E50', // dark
+		'#E74C3C', // rouge foncé
+		'#9B59B6', // violet
+		'#F39C12', // orange
+	];
 
+	const hairColors = [
+		'#446eb6', // bleu original
+		'#2C3E50', // noir
+		'#8B4513', // marron
+		'#FFD700', // blond
+		'#DC143C', // rouge
+		'#9B59B6', // violet
+		'#00CED1', // turquoise
+		'#FF1493', // rose
+	];
+
+	let currentHoodieIndex = 0;
+	let currentHairIndex = 0;
+
+	async function loadSVG() {
+		const response = await fetch('/manolia.svg');
+		const svgText = await response.text();
+		return svgText;
+	}
+
+	function updateSVGColors(svgText: string, hoodieColor: string, hairColor: string) {
+		let modifiedSVG = svgText;
+		
+		// Remplacer les couleurs du hoodie (classe .cls-5 et .cls-3)
+		modifiedSVG = modifiedSVG.replace(/\.cls-5\s*\{[^}]*fill:\s*#[^;]*;/g, `.cls-5{fill:${hoodieColor};`);
+		modifiedSVG = modifiedSVG.replace(/\.cls-3\s*\{[^}]*fill:\s*#[^;]*;/g, `.cls-3{fill:${hoodieColor};`);
+		
+		// Remplacer les couleurs des cheveux (classe .cls-9 et .cls-18)
+		modifiedSVG = modifiedSVG.replace(/\.cls-9\s*\{[^}]*fill:\s*#[^;]*;/g, `.cls-9{fill:${hairColor};`);
+		modifiedSVG = modifiedSVG.replace(/\.cls-18\s*\{[^}]*fill:\s*#[^;]*;/g, `.cls-18{fill:${hairColor};`);
+		
+		return modifiedSVG;
+	}
+
+	async function renderCharacter() {
+		const svgText = await loadSVG();
+		const hoodieColor = hoodieColors[currentHoodieIndex];
+		const hairColor = hairColors[currentHairIndex];
+		const coloredSVG = updateSVGColors(svgText, hoodieColor, hairColor);
+		
+		const charElement = document.getElementById('character');
+		const avatarElement = document.getElementById('avatar-head-svg');
+		
+		if (charElement) {
+			charElement.innerHTML = coloredSVG;
+		}
+		
+		if (avatarElement) {
+			avatarElement.innerHTML = coloredSVG;
+		}
+	}
+
+	// Initialisation
+	renderCharacter();
+
+	// Flèches gauche/droite : changer couleur du hoodie
 	document.getElementById('arrowLeft')?.addEventListener('click', () => {
-		rotation -= 90;
-		currentView = (currentView - 1 + 4) % 4;
-		updateCharacter();
+		currentHoodieIndex = (currentHoodieIndex - 1 + hoodieColors.length) % hoodieColors.length;
+		renderCharacter();
 	});
 
 	document.getElementById('arrowRight')?.addEventListener('click', () => {
-		rotation += 90;
-		currentView = (currentView + 1) % 4;
-		updateCharacter();
+		currentHoodieIndex = (currentHoodieIndex + 1) % hoodieColors.length;
+		renderCharacter();
 	});
 
+	// Flèches haut/bas : changer couleur des cheveux
 	document.getElementById('arrowTop')?.addEventListener('click', () => {
-		// Zoom in
-		if (char) {
-			const currentScale = parseFloat(char.style.transform?.match(/scale\(([\d.]+)\)/)?.[1] || '1');
-			const newScale = Math.min(currentScale + 0.2, 2);
-			char.style.transform = `rotate(${rotation}deg) scale(${newScale})`;
-		}
+		currentHairIndex = (currentHairIndex - 1 + hairColors.length) % hairColors.length;
+		renderCharacter();
 	});
 
 	document.getElementById('arrowBottom')?.addEventListener('click', () => {
-		// Zoom out
-		if (char) {
-			const currentScale = parseFloat(char.style.transform?.match(/scale\(([\d.]+)\)/)?.[1] || '1');
-			const newScale = Math.max(currentScale - 0.2, 0.5);
-			char.style.transform = `rotate(${rotation}deg) scale(${newScale})`;
-		}
+		currentHairIndex = (currentHairIndex + 1) % hairColors.length;
+		renderCharacter();
 	});
 
-	function updateCharacter() {
-		if (char) {
-			const currentScale = parseFloat(char.style.transform?.match(/scale\(([\d.]+)\)/)?.[1] || '1');
-			char.style.transform = `rotate(${rotation}deg) scale(${currentScale})`;
+	// Déplacement de la tête du menu
+	const menuAvatar = document.getElementById('menuAvatar');
+	const menuItems = document.querySelectorAll('.menu-item');
+
+	menuItems.forEach((item, index) => {
+		item.addEventListener('mouseenter', () => {
+			if (menuAvatar) {
+				const itemRect = item.getBoundingClientRect();
+				const menuRect = item.parentElement?.getBoundingClientRect();
+				if (menuRect) {
+					const topPosition = itemRect.top - menuRect.top + (itemRect.height / 2) - 35; // 35 = moitié de la hauteur de l'avatar
+					menuAvatar.style.top = `${topPosition}px`;
+				}
+			}
+		});
+	});
+
+	// Position initiale sur le premier élément
+	if (menuAvatar && menuItems.length > 0) {
+		const firstItem = menuItems[0];
+		const itemRect = firstItem.getBoundingClientRect();
+		const menuRect = firstItem.parentElement?.getBoundingClientRect();
+		if (menuRect) {
+			const topPosition = itemRect.top - menuRect.top + (itemRect.height / 2) - 35;
+			menuAvatar.style.top = `${topPosition}px`;
 		}
 	}
 </script>
