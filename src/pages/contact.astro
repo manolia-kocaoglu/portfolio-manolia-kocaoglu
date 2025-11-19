@@ -1,0 +1,472 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+---
+
+<Layout title="Contact - Manolia Kocaoglu">
+  <Header currentPage="contact" />
+
+  <!-- Background elements -->
+  <div class="grid-bg"></div>
+  <div class="pixel-decorations">
+    <div class="pixel-shape" style="top: 15%; left: 8%;"></div>
+    <div class="pixel-shape" style="top: 25%; right: 12%;"></div>
+    <div class="pixel-cross" style="top: 45%; left: 5%;"></div>
+    <div class="pixel-cross" style="bottom: 30%; right: 8%;"></div>
+    <div class="pixel-plus" style="top: 60%; right: 15%;"></div>
+    <div class="pixel-plus" style="bottom: 20%; left: 10%;"></div>
+  </div>
+
+  <div class="contact-container">
+    <div class="contact-content">
+      <!-- Formulaire de contact -->
+      <div class="contact-card">
+        <div class="card-header">
+          <h2>CONTACTEZ-MOI !</h2>
+        </div>
+        
+        <form class="contact-form" method="POST" action="https://formspree.io/f/xwpyqkwp">
+          <div class="form-group">
+            <label for="name">Nom + prénom</label>
+            <input 
+              type="text" 
+              id="name" 
+              name="name" 
+              placeholder="Ex: Marie Dubois"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input 
+              type="email" 
+              id="email" 
+              name="email" 
+              placeholder="Ex: marie.d@gmail.com"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="message">Votre message</label>
+            <textarea 
+              id="message" 
+              name="message" 
+              rows="6"
+              placeholder="Votre message ici..."
+              required
+            ></textarea>
+          </div>
+
+          <button type="submit" class="submit-button">
+            <span>Envoyer</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </form>
+      </div>
+
+      <!-- Infos de contact -->
+      <div class="info-card">
+        <div class="card-header">
+          <h2>INFOS</h2>
+        </div>
+        
+        <div class="card-body">
+          <div class="info-section">
+            <div class="info-item">
+              <div class="info-icon">✉️</div>
+              <div class="info-content">
+                <span class="info-label">Email</span>
+                <a href="mailto:manolia.kocaoglu@gmail.com" class="info-value">manolia.kocaoglu@gmail.com</a>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <div class="info-icon">📍</div>
+              <div class="info-content">
+                <span class="info-label">Localisation</span>
+                <span class="info-value">Montbéliard, France</span>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <div class="info-icon">💼</div>
+              <div class="info-content">
+                <span class="info-label">Disponibilité</span>
+                <span class="info-value status-available">Disponible</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="social-section">
+            <p class="social-label">Retrouvez-moi sur :</p>
+            <div class="social-links">
+              <a href="https://linkedin.com" target="_blank" class="social-btn">
+                <span>LinkedIn</span>
+              </a>
+              <a href="https://behance.net" target="_blank" class="social-btn">
+                <span>Behance</span>
+              </a>
+              <a href="https://instagram.com" target="_blank" class="social-btn">
+                <span>Instagram</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="avatar-section">
+            <div class="small-avatar">
+              <img src="/manolia.svg" alt="Manolia" />
+            </div>
+            <p class="avatar-text">Réponse rapide garantie ! ⚡</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  :global(body) {
+    overflow: hidden;
+  }
+
+  .grid-bg {
+    position: fixed;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+    background-size: 50px 50px;
+    z-index: 0;
+  }
+
+  .pixel-decorations {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .pixel-shape,
+  .pixel-cross,
+  .pixel-plus {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background: rgba(255, 255, 255, 0.15);
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .pixel-cross {
+    background: 
+      linear-gradient(rgba(255,255,255,0.2) 6px, transparent 6px, transparent 12px, rgba(255,255,255,0.2) 12px),
+      linear-gradient(90deg, rgba(255,255,255,0.2) 6px, transparent 6px, transparent 12px, rgba(255,255,255,0.2) 12px);
+    animation-delay: 1s;
+  }
+
+  .pixel-plus {
+    clip-path: polygon(40% 0%, 60% 0%, 60% 40%, 100% 40%, 100% 60%, 60% 60%, 60% 100%, 40% 100%, 40% 60%, 0% 60%, 0% 40%, 40% 40%);
+    animation-delay: 2s;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); opacity: 0.7; }
+    50% { transform: translateY(-12px); opacity: 1; }
+  }
+
+  .contact-container {
+    position: relative;
+    z-index: 2;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 140px 40px 40px;
+    overflow: hidden;
+  }
+
+  .contact-content {
+    max-width: 1100px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 20px;
+    max-height: calc(100vh - 180px);
+  }
+
+  /* Cards */
+  .contact-card,
+  .info-card {
+    background: #111b9f;
+    border: 4px solid #ffffff;
+    box-shadow: 8px 8px 0 0 rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    animation: cardAppear 0.6s ease-out;
+  }
+
+  .info-card {
+    animation-delay: 0.1s;
+  }
+
+  @keyframes cardAppear {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .card-header {
+    background: rgba(0, 0, 0, 0.3);
+    border-bottom: 3px solid rgba(255, 255, 255, 0.3);
+    padding: 12px 20px;
+  }
+
+  .card-header h2 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.85rem;
+    color: #ffffff;
+    letter-spacing: 0.08em;
+    margin: 0;
+  }
+
+  .card-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* Form */
+  .contact-form {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .form-group label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.6rem;
+    color: #ffffff;
+    letter-spacing: 0.05em;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    background: rgba(0, 0, 0, 0.3);
+    border: 3px solid rgba(255, 255, 255, 0.4);
+    color: #ffffff;
+    padding: 12px 16px;
+    font-size: 0.85rem;
+    font-family: system-ui, sans-serif;
+    transition: all 0.3s;
+  }
+
+  .form-group input:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: #ffd700;
+    background: rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.2);
+  }
+
+  .form-group input::placeholder,
+  .form-group textarea::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  .submit-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 24px;
+    background: #ffffff;
+    color: #111b9f;
+    border: 3px solid #ffffff;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    box-shadow: 5px 5px 0 0 rgba(0, 0, 0, 0.3);
+    transition: all 0.2s;
+    margin-top: 10px;
+  }
+
+  .submit-button:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 7px 7px 0 0 rgba(0, 0, 0, 0.4);
+    background: #ffd700;
+  }
+
+  /* Info section */
+  .info-section {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .info-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .info-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  .info-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+  }
+
+  .info-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.55rem;
+    color: #6b7fff;
+    letter-spacing: 0.05em;
+  }
+
+  .info-value {
+    font-size: 0.75rem;
+    color: #ffffff;
+    line-height: 1.5;
+    letter-spacing: 0.01em;
+    word-break: break-word;
+  }
+
+  .info-value a {
+    color: #ffffff;
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .info-value a:hover {
+    color: #ffd700;
+  }
+
+  .status-available {
+    color: #4ade80;
+    font-weight: 600;
+  }
+
+  /* Social section */
+  .social-section {
+    padding-top: 16px;
+    border-top: 2px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .social-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.55rem;
+    color: #ffffff;
+    margin-bottom: 12px;
+  }
+
+  .social-links {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .social-btn {
+    padding: 8px 14px;
+    background: transparent;
+    color: #ffffff;
+    border: 2px solid #ffffff;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.5rem;
+    text-decoration: none;
+    cursor: pointer;
+    box-shadow: 3px 3px 0 0 rgba(0, 0, 0, 0.3);
+    transition: all 0.2s;
+  }
+
+  .social-btn:hover {
+    background: #ffffff;
+    color: #111b9f;
+    transform: translate(-2px, -2px);
+    box-shadow: 5px 5px 0 0 rgba(0, 0, 0, 0.4);
+  }
+
+  /* Avatar section */
+  .avatar-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding-top: 16px;
+    border-top: 2px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .small-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #ffffff;
+    border: 3px solid #ffffff;
+    box-shadow: 0 0 0 2px #111b9f, 3px 3px 0 2px rgba(0, 0, 0, 0.3);
+  }
+
+  .small-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.4);
+  }
+
+  .avatar-text {
+    font-size: 0.7rem;
+    color: #ffffff;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  @media (max-width: 1024px) {
+    .contact-content {
+      grid-template-columns: 1fr;
+      overflow-y: auto;
+      max-height: calc(100vh - 160px);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .contact-container {
+      padding: 120px 20px 40px;
+    }
+
+    .contact-form {
+      padding: 16px;
+    }
+
+    .card-body {
+      padding: 16px;
+    }
+  }
+</style>
