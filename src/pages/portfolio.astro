@@ -33,7 +33,7 @@ const projets = await pb.collection('projets').getFullList({
 
     <div class="projects-grid">
       {projets.map((projet, index) => {
-        const imageUrl = projet.image ? pb.getFileUrl(projet, projet.image) : null;
+        const imageUrl = projet.image ? pb.files.getURL(projet, projet.image) : null;
         
         return (
           <a href={`/projet/${projet.id}`} class="project-card" data-index={index}>
