@@ -3,13 +3,21 @@ import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import pb from '../utils/pb';
 
-
 // Récupère TOUS les projets
 const projets = await pb.collection('projets').getFullList({
   sort: '-created',
-  $autoCancel: false
 });
----
+
+// Récupère TOUS les GDD
+const gdds = await pb.collection('gdd').getFullList({
+  sort: '-created',
+});
+
+// Combine les deux listes avec un type pour différencier
+const tousLesProjets = [
+  ...projets.map(p => ({ ...p, type: 'projet' })),
+  ...gdds.map(g => ({ ...g, type: 'gdd' }))
+];
 ---
 
 <Layout title="Portfolio - Manolia Kocaoglu">
@@ -33,15 +41,16 @@ const projets = await pb.collection('projets').getFullList({
     </section>
 
     <div class="projects-grid">
-      {projets.map((projet, index) => {
-        const imageUrl = projet.image ? pb.files.getURL(projet, projet.image) : null;
+      {tousLesProjets.map((item, index) => {
+        const imageUrl = item.image ? pb.files.getURL(item, item.image) : null;
+        const projectUrl = item.type === 'gdd' ? `/gdd/${item.id}` : `/projet/${item.id}`;
         
         return (
-          <a href={`/projet/${projet.id}`} class="project-card" data-index={index}>
+          <a href={projectUrl} class="project-card" data-index={index}>
             <div class="card-inner">
               <div class="card-thumbnail">
                 {imageUrl ? (
-                  <img src={imageUrl} alt={projet.titre} />
+                  <img src={imageUrl} alt={item.titre} />
                 ) : (
                   <div class="thumbnail-fallback">
                     <span>?</span>
@@ -53,12 +62,14 @@ const projets = await pb.collection('projets').getFullList({
               </div>
               
               <div class="card-content">
-                <h2 class="card-title">{projet.titre}</h2>
+                <h2 class="card-title">{item.titre}</h2>
                 <p class="card-description">
-                  {projet.description?.split('\n')[0] || 'Découvrir le projet'}
+                  {item.description?.split('\n')[0] || item.sous_titre || 'Découvrir le projet'}
                 </p>
                 <div class="card-footer">
-                  <span class="level-badge">LVL {index + 1}</span>
+                  <span class="level-badge">
+                    {item.type === 'gdd' ? 'LVL 3' : `LVL ${index + 1}`}
+                  </span>
                   <span class="arrow">→</span>
                 </div>
               </div>

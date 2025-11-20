@@ -1,0 +1,758 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import pb from '../../utils/pb';
+
+export const prerender = false;
+
+const { slug } = Astro.params;
+
+// Récupérer le projet GDD par son ID
+let gdd;
+try {
+  gdd = await pb.collection('gdd').getOne(slug || '');
+  console.log('✅ GDD récupéré:', gdd.titre);
+} catch (error) {
+  console.error('❌ Erreur:', error);
+  return Astro.redirect('/portfolio');
+}
+
+// Images
+const imageUrl = gdd.image ? pb.files.getURL(gdd, gdd.image) : null;
+const illustrationUrl = gdd.illustration ? pb.files.getURL(gdd, gdd.illustration) : null;
+
+// Textes
+const description = (gdd.description ?? '').split('\n');
+const univers = (gdd.univers_lore ?? '').split('\n');
+const gameplay = (gdd.gameplay_systeme ?? '').split('\n');
+const credits = (gdd.credits ?? '').split('\n');
+---
+
+<Layout title={`${gdd.titre} - Manolia Kocaoglu`}>
+  <Header currentPage="portfolio" />
+  
+  <div class="grid-bg"></div>
+  
+  <div class="pixel-decorations">
+    <div class="pixel-shape" style="top: 10%; left: 5%;"></div>
+    <div class="pixel-shape" style="top: 20%; right: 12%;"></div>
+    <div class="pixel-cross" style="top: 15%; right: 20%;"></div>
+    <div class="pixel-plus" style="bottom: 40%; left: 5%;"></div>
+  </div>
+
+  <div class="gdd-container">
+    <!-- Dots de navigation -->
+    <div class="nav-dots">
+      <button class="dot active" data-section="0"></button>
+      <button class="dot" data-section="1"></button>
+      <button class="dot" data-section="2"></button>
+      <button class="dot" data-section="3"></button>
+    </div>
+
+    <!-- Sections fullscreen -->
+    <div class="sections-wrapper">
+      <!-- Section 1: Présentation -->
+      <section class="section active" data-index="0">
+        <div class="section-content">
+          <div class="hero-content">
+            {imageUrl && (
+              <div class="game-logo">
+                <img src={imageUrl} alt={gdd.titre} />
+              </div>
+            )}
+            
+            <h1 class="game-title">{gdd.titre}</h1>
+            {gdd.sous_titre && <p class="game-subtitle">{gdd.sous_titre}</p>}
+            
+            <div class="game-description">
+              {description.map((p: string) => p && <p>{p}</p>)}
+            </div>
+
+            {illustrationUrl && (
+              <div class="illustration-preview">
+                <img src={illustrationUrl} alt="Illustration" />
+              </div>
+            )}
+          </div>
+        </div>
+        <button class="scroll-indicator" data-next="1">↓</button>
+      </section>
+
+      <!-- Section 2: Univers & Lore -->
+      <section class="section" data-index="1">
+        <div class="section-content">
+          <div class="content-section">
+            <h2>🌙 UNIVERS & LORE</h2>
+            <div class="section-text">
+              {univers.map((p: string) => p && <p>{p}</p>)}
+            </div>
+          </div>
+        </div>
+        <button class="scroll-indicator" data-next="2">↓</button>
+      </section>
+
+      <!-- Section 3: Gameplay & Système -->
+      <section class="section" data-index="2">
+        <div class="section-content">
+          <div class="content-section">
+            <h2>🎮 GAMEPLAY & SYSTÈME</h2>
+            <div class="section-text">
+              {gameplay.map((p: string) => p && <p>{p}</p>)}
+            </div>
+          </div>
+        </div>
+        <button class="scroll-indicator" data-next="3">↓</button>
+      </section>
+
+      <!-- Section 4: Crédits -->
+      <section class="section" data-index="3">
+        <div class="section-content">
+          <div class="content-section">
+            <h2>✨ CRÉDITS</h2>
+            <div class="section-text">
+              {credits.map((p: string) => p && <p>{p}</p>)}
+            </div>
+            
+            <div class="credits-footer">
+              <div class="manolia-avatar">
+                <img src="/manolia.svg" alt="Manolia" />
+              </div>
+              <a href="/portfolio" class="cta-button">
+                <span>RETOUR AU PORTFOLIO</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="M5 12h14M12 5l7 7-7 7" stroke-width="2" stroke-linecap="round" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .grid-bg {
+    position: fixed;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+    background-size: 60px 60px;
+    opacity: 0.7;
+    z-index: 0;
+  }
+
+  .pixel-decorations {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .pixel-shape,
+  .pixel-cross,
+  .pixel-plus {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background: rgba(255, 255, 255, 0.15);
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .pixel-cross {
+    background:
+      linear-gradient(rgba(255,255,255,0.25) 5px, transparent 5px, transparent 11px, rgba(255,255,255,0.25) 11px),
+      linear-gradient(90deg, rgba(255,255,255,0.25) 5px, transparent 5px, transparent 11px, rgba(255,255,255,0.25) 11px);
+  }
+
+  .pixel-plus {
+    clip-path: polygon(40% 0%, 60% 0%, 60% 40%, 100% 40%, 100% 60%, 60% 60%, 60% 100%, 40% 100%, 40% 60%, 0% 60%, 0% 40%, 40% 40%);
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); opacity: 0.7; }
+    50% { transform: translateY(-10px); opacity: 1; }
+  }
+
+  .gdd-container {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .nav-dots {
+    position: fixed;
+    top: 50%;
+    right: 40px;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    z-index: 100;
+  }
+
+  .dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+    border: 2px solid #ffffff;
+    cursor: pointer;
+    transition: all 0.3s;
+    padding: 0;
+  }
+
+  .dot.active {
+    background: #ffffff;
+    transform: scale(1.4);
+  }
+
+  .dot:hover {
+    background: rgba(255,255,255,0.6);
+    transform: scale(1.2);
+  }
+
+  .sections-wrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+  }
+
+  .section {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 120px 40px 80px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.6s ease, visibility 0.6s;
+  }
+
+  .section.active {
+    opacity: 1;
+    visibility: visible;
+    z-index: 2;
+  }
+
+  .section-content {
+    max-width: 1000px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  /* Hero */
+  .hero-content {
+    text-align: center;
+  }
+
+  .game-logo {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto 25px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid #ffffff;
+    box-shadow: 0 0 0 4px #111b9f, 6px 6px 0 4px rgba(0,0,0,0.4);
+  }
+
+  .game-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .game-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
+    color: #ffffff;
+    margin-bottom: 12px;
+    text-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+    letter-spacing: 0.1em;
+  }
+
+  .game-subtitle {
+    font-size: 0.9rem;
+    color: #dcdcff;
+    margin-bottom: 20px;
+    letter-spacing: 0.05em;
+  }
+
+  .game-description {
+    font-size: 0.8rem;
+    line-height: 1.7;
+    color: #f5f5ff;
+    margin-bottom: 25px;
+  }
+
+  .game-description p {
+    margin-bottom: 10px;
+  }
+
+  .illustration-preview {
+    max-width: 500px;
+    margin: 0 auto;
+    border: 4px solid #ffffff;
+    box-shadow: 6px 6px 0 0 rgba(0,0,0,0.4);
+    overflow: hidden;
+  }
+
+  .illustration-preview img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Content sections */
+  .content-section {
+    text-align: center;
+  }
+
+  .content-section h2 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(1.2rem, 2.5vw, 2rem);
+    color: #ffffff;
+    margin-bottom: 30px;
+    text-shadow: 3px 3px 0 rgba(0,0,0,0.3);
+    letter-spacing: 0.1em;
+  }
+
+  .section-text {
+    max-width: 800px;
+    margin: 0 auto;
+    font-size: 0.85rem;
+    line-height: 1.8;
+    color: #f5f5ff;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 10px;
+  }
+
+  .section-text::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .section-text::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .section-text::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+  }
+
+  .section-text p {
+    margin-bottom: 15px;
+  }
+
+  .section-text p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Credits */
+  .credits-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 40px;
+  }
+
+  .manolia-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #ffffff;
+    border: 3px solid #522546;
+    box-shadow: 4px 4px 0 0 rgba(0,0,0,0.3);
+  }
+
+  .manolia-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .cta-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    background: #ffffff;
+    color: #141a7b;
+    border: 3px solid #ffffff;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    box-shadow: 5px 5px 0 0 #141a7b;
+    transition: all 0.2s;
+  }
+
+  .cta-button:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 7px 7px 0 0 #141a7b;
+  }
+
+  .scroll-indicator {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 2rem;
+    cursor: pointer;
+    animation: bounce 2s ease-in-out infinite;
+    z-index: 10;
+    padding: 0;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(10px); }
+  }
+
+  .scroll-indicator:hover {
+    color: #ffd700;
+  }
+
+  @media (max-width: 768px) {
+    .nav-dots {
+      right: 20px;
+    }
+
+    .section {
+      padding: 100px 20px 60px;
+    }
+
+    .game-logo {
+      width: 120px;
+      height: 120px;
+    }
+
+    .credits-footer {
+      flex-direction: column;
+      gap: 25px;
+    }
+  }
+
+  .grid-bg {
+    position: fixed;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+    background-size: 60px 60px;
+    opacity: 0.7;
+    z-index: 0;
+  }
+
+  .pixel-decorations {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .pixel-shape,
+  .pixel-cross,
+  .pixel-plus {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background: rgba(255, 255, 255, 0.15);
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .pixel-cross {
+    background:
+      linear-gradient(rgba(255,255,255,0.25) 5px, transparent 5px, transparent 11px, rgba(255,255,255,0.25) 11px),
+      linear-gradient(90deg, rgba(255,255,255,0.25) 5px, transparent 5px, transparent 11px, rgba(255,255,255,0.25) 11px);
+  }
+
+  .pixel-plus {
+    clip-path: polygon(40% 0%, 60% 0%, 60% 40%, 100% 40%, 100% 60%, 60% 60%, 60% 100%, 40% 100%, 40% 60%, 0% 60%, 0% 40%, 40% 40%);
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); opacity: 0.7; }
+    50% { transform: translateY(-10px); opacity: 1; }
+  }
+
+  .container {
+    position: relative;
+    z-index: 2;
+    height: 100vh;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 120px 40px 40px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .top-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-shrink: 0;
+  }
+
+  .back-btn {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 0.8rem;
+    padding: 10px 18px;
+    border: 3px solid #fff;
+    background: rgba(0,0,0,0.2);
+    font-family: 'Press Start 2P', monospace;
+    box-shadow: 4px 4px 0 0 rgba(0,0,0,0.3);
+    transition: all 0.2s;
+  }
+
+  .back-btn:hover {
+    background: #ffffff;
+    color: #141a7b;
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 0 rgba(0,0,0,0.3);
+  }
+
+  .logo {
+    font-size: 2rem;
+    color: #fff;
+  }
+
+  .gdd-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 10px;
+  }
+
+  /* Scrollbar custom */
+  .gdd-layout::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .gdd-layout::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .gdd-layout::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+  }
+
+  .gdd-layout::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+  }
+
+  /* Hero Section */
+  .hero-section {
+    text-align: center;
+    padding: 20px 0;
+  }
+
+  .hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .game-logo {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid #ffffff;
+    box-shadow: 0 0 0 3px #111b9f, 6px 6px 0 3px rgba(0,0,0,0.4);
+  }
+
+  .game-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .game-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(1.2rem, 3vw, 2rem);
+    color: #ffffff;
+    margin-bottom: 10px;
+    text-shadow: 3px 3px 0 rgba(0,0,0,0.3);
+    letter-spacing: 0.1em;
+  }
+
+  .game-subtitle {
+    font-size: 0.8rem;
+    color: #dcdcff;
+    margin-bottom: 15px;
+    letter-spacing: 0.05em;
+  }
+
+  .game-description {
+    font-size: 0.75rem;
+    line-height: 1.6;
+    color: #f5f5ff;
+  }
+
+  .game-description p {
+    margin-bottom: 8px;
+  }
+
+  /* Illustration */
+  .illustration-section {
+    display: flex;
+    justify-content: center;
+  }
+
+  .illustration-card {
+    max-width: 500px;
+    width: 100%;
+    border: 3px solid #ffffff;
+    box-shadow: 6px 6px 0 0 rgba(0,0,0,0.4);
+    overflow: hidden;
+    background: #05060f;
+  }
+
+  .illustration-card img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Content Grid */
+  .content-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 30px;
+  }
+
+  .content-card,
+  .credits-card {
+    background: #111b9f;
+    border: 4px solid #ffffff;
+    box-shadow: 8px 8px 0 0 rgba(0,0,0,0.4);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-header {
+    background: rgba(0, 0, 0, 0.3);
+    border-bottom: 3px solid rgba(255, 255, 255, 0.3);
+    padding: 12px 20px;
+  }
+
+  .card-header h2 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.75rem;
+    color: #ffffff;
+    letter-spacing: 0.08em;
+    margin: 0;
+  }
+
+  .card-body {
+    padding: 18px;
+    font-size: 0.75rem;
+    line-height: 1.6;
+    color: #f5f5ff;
+  }
+
+  .card-body p {
+    margin-bottom: 12px;
+  }
+
+  .card-body p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Credits */
+  .credits-section {
+    margin-top: 20px;
+  }
+
+  .credits-card {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .credits-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-top: 3px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .manolia-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #ffffff;
+    border: 3px solid #522546;
+    box-shadow: 4px 4px 0 0 rgba(0,0,0,0.3);
+  }
+
+  .manolia-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .cta-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 24px;
+    background: #ffffff;
+    color: #141a7b;
+    border: 3px solid #ffffff;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    box-shadow: 5px 5px 0 0 #141a7b;
+    transition: all 0.2s;
+  }
+
+  .cta-button:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 7px 7px 0 0 #141a7b;
+  }
+
+  @media (max-width: 900px) {
+    .content-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .credits-footer {
+      flex-direction: column;
+      gap: 20px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .container {
+      padding: 120px 20px 40px;
+    }
+
+    .game-logo {
+      width: 150px;
+      height: 150px;
+    }
+  }
+</style>
