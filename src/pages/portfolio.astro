@@ -7,7 +7,9 @@ import pb from '../utils/pb';
 // Récupère TOUS les projets
 const projets = await pb.collection('projets').getFullList({
   sort: '-created',
+  $autoCancel: false
 });
+---
 ---
 
 <Layout title="Portfolio - Manolia Kocaoglu">
