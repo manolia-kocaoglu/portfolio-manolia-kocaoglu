@@ -129,6 +129,63 @@ const credits = (gdd.credits ?? '').split('\n');
       </section>
     </div>
   </div>
+
+  <script>
+    let currentSection = 0;
+    const sections = document.querySelectorAll('.section');
+    const dots = document.querySelectorAll('.dot');
+  
+    function goToSection(index: number) {
+      if (index < 0 || index >= sections.length) return;
+      
+      sections[currentSection].classList.remove('active');
+      dots[currentSection].classList.remove('active');
+      
+      currentSection = index;
+      
+      sections[currentSection].classList.add('active');
+      dots[currentSection].classList.add('active');
+    }
+  
+    // Navigation par dots
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', () => {
+        goToSection(index);
+      });
+    });
+  
+    // Navigation par flèches ↓
+    document.querySelectorAll('.scroll-indicator').forEach((indicator) => {
+      indicator.addEventListener('click', () => {
+        const nextIndex = parseInt(indicator.getAttribute('data-next') || '0');
+        goToSection(nextIndex);
+      });
+    });
+  
+    // Navigation par scroll/trackpad
+    let isScrolling = false;
+    let scrollTimeout: number;
+    
+    document.addEventListener('wheel', (e) => {
+      if (isScrolling) return;
+      e.preventDefault();
+      
+      if (Math.abs(e.deltaY) > 10) {
+        isScrolling = true;
+        
+        if (e.deltaY > 0) {
+          goToSection(currentSection + 1);
+        } else {
+          goToSection(currentSection - 1);
+        }
+        
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+          isScrolling = false;
+        }, 1000);
+      }
+    }, { passive: false });
+  </script>
 </Layout>
 
 <style>
