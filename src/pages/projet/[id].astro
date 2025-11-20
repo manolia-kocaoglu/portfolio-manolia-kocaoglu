@@ -16,11 +16,21 @@ export async function getStaticPaths() {
 const { projet } = Astro.props;
 const pb = new PocketBase('http://127.0.0.1:8090');
 
+// Images
 const imageUrl = projet.image ? pb.getFileUrl(projet, projet.image) : null;
+const couleursImageUrl = projet.couleurs_image ? pb.getFileUrl(projet, projet.couleurs_image) : null;
+const demo1Url = projet.demo1 ? pb.getFileUrl(projet, projet.demo1) : null;
+const demo2Url = projet.demo2 ? pb.getFileUrl(projet, projet.demo2) : null;
+const demo3Url = projet.demo3 ? pb.getFileUrl(projet, projet.demo3) : null;
+
+// Textes
 const description = (projet.description ?? '').split('\n');
 const couleurs = (projet.couleurs ?? '').split('\n');
 const typographie = (projet.typographie ?? '').split('\n');
 const credits = (projet.credits ?? '').split('\n');
+
+// Noms des typographies (séparés par des sauts de ligne dans PocketBase)
+const nomsTypo = (projet.noms_typographie ?? '').split('\n').filter((t: string) => t.trim());
 ---
 
 <ProjectLayout title={`${projet.titre} - Manolia Kocaoglu`}>
@@ -33,6 +43,7 @@ const credits = (projet.credits ?? '').split('\n');
       <button class="dot" data-section="1"></button>
       <button class="dot" data-section="2"></button>
       <button class="dot" data-section="3"></button>
+      <button class="dot" data-section="4"></button>
     </div>
 
     <!-- Sections fullscreen -->
@@ -42,7 +53,7 @@ const credits = (projet.credits ?? '').split('\n');
         <div class="section-content">
           <div class="project-hero">
             <h1 class="project-title">{projet.titre}</h1>
-            <p class="project-subtitle">Plateforme de tatouage par IA</p>
+            <p class="project-subtitle">{projet.sous_titre || ''}</p>
             
             <div class="project-visual">
               {imageUrl ? (
@@ -68,12 +79,11 @@ const credits = (projet.credits ?? '').split('\n');
           <div class="colors-section">
             <h2>HARMONIE COLORÉE</h2>
             
-            <div class="color-showcase">
-              <div class="color-box" style="background: #111111;"></div>
-              <div class="color-box" style="background: #333333;"></div>
-              <div class="color-box" style="background: #777777;"></div>
-              <div class="color-box" style="background: #f5f5f5;"></div>
-            </div>
+            {couleursImageUrl ? (
+              <div class="colors-image" style="max-width: 300px;">
+                <img src={couleursImageUrl} alt="Palette de couleurs" style="width: 100%; height: auto;" />
+              </div>
+            ) : null}
             
             <div class="section-text">
               {couleurs.map((p: string) => p && <p>{p}</p>)}
@@ -90,17 +100,21 @@ const credits = (projet.credits ?? '').split('\n');
             <h2>TYPOGRAPHIE</h2>
             
             <div class="typo-showcase">
-              <div class="font-display">
-                <span class="font-label">Montserrat Alternates</span>
-                <div class="font-variants">
-                  <span class="bold-text">Bold</span>
-                  <span class="medium-text">Medium</span>
+              {nomsTypo.length > 0 ? (
+                nomsTypo.map((typo: string) => (
+                  <div class="font-display">
+                    <span class="font-label">{typo}</span>
+                  </div>
+                ))
+              ) : (
+                <div class="font-display">
+                  <span class="font-label">Typographie principale</span>
+                  <div class="font-variants">
+                    <span class="bold-text">Bold</span>
+                    <span class="medium-text">Medium</span>
+                  </div>
                 </div>
-              </div>
-              
-              <div class="font-display nosifer">
-                <span class="font-label-large">NOSIFER</span>
-              </div>
+              )}
             </div>
             
             <div class="section-text">
@@ -111,7 +125,38 @@ const credits = (projet.credits ?? '').split('\n');
         <button class="scroll-indicator" data-next="3">↓</button>
       </section>
 
-      <!-- Section 4: Crédits -->
+      <!-- Section 4: Démonstrations -->
+      <section class="section" data-index="3">
+        <div class="section-content">
+          <div class="demo-section">
+            <h2>DÉMONSTRATIONS</h2>
+            
+            <div class="demo-gallery">
+              {demo1Url && (
+                <div class="demo-item">
+                  <img src={demo1Url} alt="Démo 1" />
+                </div>
+              )}
+              {demo2Url && (
+                <div class="demo-item">
+                  <img src={demo2Url} alt="Démo 2" />
+                </div>
+              )}
+              {demo3Url && (
+                <div class="demo-item">
+                  <img src={demo3Url} alt="Démo 3" />
+                </div>
+              )}
+              {!demo1Url && !demo2Url && !demo3Url && (
+                <p class="no-demos">Aucune démonstration disponible pour ce projet</p>
+              )}
+            </div>
+          </div>
+        </div>
+        <button class="scroll-indicator" data-next="4">↓</button>
+      </section>
+
+      <!-- Section 5: Crédits -->
       <section class="section" data-index="3">
         <div class="section-content">
           <div class="credits-section">
@@ -125,8 +170,8 @@ const credits = (projet.credits ?? '').split('\n');
               <div class="manolia-avatar">
                 <img src="/manolia.svg" alt="Manolia" />
               </div>
-              <a href={projet.lien || '#'} target="_blank" class="cta-button">
-                <span>VOIR LE PROJET</span>
+              <a href="/portfolio" class="cta-button">
+                <span>RETOUR AU PORTFOLIO</span>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                   <path d="M5 12h14M12 5l7 7-7 7" stroke-width="2" stroke-linecap="round" />
                 </svg>
@@ -271,6 +316,7 @@ const credits = (projet.credits ?? '').split('\n');
 
   .colors-section,
   .typo-section,
+  .demo-section,
   .credits-section {
     text-align: center;
   }
@@ -289,6 +335,20 @@ const credits = (projet.credits ?? '').split('\n');
     gap: 24px;
     justify-content: center;
     margin-bottom: 40px;
+  }
+
+  .colors-image {
+    max-width: 600px;
+    margin: 0 auto 40px;
+    border: 4px solid #ffffff;
+    box-shadow: 6px 6px 0 0 rgba(0,0,0,0.3);
+    overflow: hidden;
+  }
+
+  .colors-image img {
+    width: 100%;
+    height: auto;
+    display: block;
   }
 
   .color-box {
@@ -344,6 +404,39 @@ const credits = (projet.credits ?? '').split('\n');
 
   .section-text p {
     margin-bottom: 12px;
+  }
+
+  .demo-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .demo-item {
+    border: 4px solid #ffffff;
+    box-shadow: 6px 6px 0 0 rgba(0,0,0,0.3);
+    overflow: hidden;
+    background: #05060f;
+    transition: transform 0.3s ease;
+  }
+
+  .demo-item:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0 0 rgba(0,0,0,0.4);
+  }
+
+  .demo-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .no-demos {
+    font-size: 0.9rem;
+    color: #dcdcff;
+    font-style: italic;
   }
 
   .credits-footer {
@@ -418,10 +511,6 @@ const credits = (projet.credits ?? '').split('\n');
   }
 
   @media (max-width: 768px) {
-    .project-nav {
-      padding: 20px;
-    }
-
     .section {
       padding: 100px 30px 60px;
     }
@@ -429,6 +518,11 @@ const credits = (projet.credits ?? '').split('\n');
     .color-box {
       width: 60px;
       height: 60px;
+    }
+
+    .demo-gallery {
+      grid-template-columns: 1fr;
+      gap: 20px;
     }
 
     .credits-footer {
@@ -455,7 +549,6 @@ const credits = (projet.credits ?? '').split('\n');
     dots[currentSection].classList.add('active');
   }
 
-  // Navigation par les flèches du clavier
   document.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
       goToSection(currentSection + 1);
@@ -464,14 +557,12 @@ const credits = (projet.credits ?? '').split('\n');
     }
   });
 
-  // Navigation par les dots
   dots.forEach((dot, index) => {
     dot.addEventListener('click', () => {
       goToSection(index);
     });
   });
 
-  // Navigation par les indicateurs de scroll
   document.querySelectorAll('.scroll-indicator').forEach((indicator) => {
     indicator.addEventListener('click', () => {
       const nextIndex = parseInt(indicator.getAttribute('data-next') || '0');
@@ -479,29 +570,23 @@ const credits = (projet.credits ?? '').split('\n');
     });
   });
 
-  // Navigation par scroll de la souris (améliorée)
   let isScrolling = false;
   let scrollTimeout: number;
   
   document.addEventListener('wheel', (e) => {
     if (isScrolling) return;
     
-    // Empêcher le scroll par défaut
     e.preventDefault();
     
-    // Détecter la direction avec un seuil
     if (Math.abs(e.deltaY) > 10) {
       isScrolling = true;
       
       if (e.deltaY > 0) {
-        // Scroll vers le bas
         goToSection(currentSection + 1);
       } else {
-        // Scroll vers le haut
         goToSection(currentSection - 1);
       }
       
-      // Débloquer après un délai
       clearTimeout(scrollTimeout);
       scrollTimeout = setTimeout(() => {
         isScrolling = false;
@@ -509,7 +594,6 @@ const credits = (projet.credits ?? '').split('\n');
     }
   }, { passive: false });
 
-  // Navigation tactile pour mobile
   let touchStartY = 0;
   document.addEventListener('touchstart', (e) => {
     touchStartY = e.touches[0].clientY;
