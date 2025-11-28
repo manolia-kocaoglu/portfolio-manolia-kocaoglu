@@ -52,7 +52,7 @@ const nomsTypo = (projet.noms_typographie ?? '').split('\n').filter(t => t.trim(
     <div class="sections-wrapper">
       <!-- Section 1: Présentation -->
       <section class="section active" data-index="0">
-        <div class="section-content presentation-section">
+        <div class="section-content">
           <div class="project-hero">
             <h1 class="project-title">{projet.titre}</h1>
             {projet.sous_titre && <p class="project-subtitle">{projet.sous_titre}</p>}
@@ -311,23 +311,10 @@ const nomsTypo = (projet.noms_typographie ?? '').split('\n').filter(t => t.trim(
     max-width: 1000px;
     width: 100%;
     margin: 0 auto;
-    max-height: calc(100vh - 280px);
-    overflow-y: auto;
-    padding-right: 10px;
-  }
-
-  .section-content::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  .section-content::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
-  }
-
-  .section-content::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.4);
-    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
 
   .scroll-indicator {
@@ -387,7 +374,7 @@ const nomsTypo = (projet.noms_typographie ?? '').split('\n').filter(t => t.trim(
   }
 
   .project-visual {
-    max-width: 600px;
+    max-width: 500px;
     margin: 0 auto 30px;
     border: 4px solid #ffffff;
     box-shadow: 8px 8px 0 0 rgba(0,0,0,0.3);
@@ -402,21 +389,21 @@ const nomsTypo = (projet.noms_typographie ?? '').split('\n').filter(t => t.trim(
   }
 
   .project-description {
-    max-width: 700px;
+    max-width: 600px;
     margin: 0 auto;
-    font-size: 0.85rem;
-    line-height: 1.8;
+    font-size: 0.8rem;
+    line-height: 1.6;
     color: #f5f5ff;
     text-align: left;
   }
 
   .project-description p {
-    margin-bottom: 15px;
+    margin-bottom: 12px;
   }
 
   .colors-image {
     max-width: 400px;
-    margin: 0 auto 40px;
+    margin: 0 auto 30px;
     border: 4px solid #ffffff;
     box-shadow: 6px 6px 0 0 rgba(0,0,0,0.3);
     overflow: hidden;
@@ -430,37 +417,45 @@ const nomsTypo = (projet.noms_typographie ?? '').split('\n').filter(t => t.trim(
   }
 
   .section-text {
-    max-width: 700px;
+    max-width: 600px;
     margin: 0 auto;
-    font-size: 0.85rem;
-    line-height: 1.8;
+    font-size: 0.8rem;
+    line-height: 1.6;
     color: #f5f5ff;
     text-align: left;
   }
 
   .section-text p {
-    margin-bottom: 15px;
+    margin-bottom: 12px;
+  }
+
+  .no-content {
+    font-size: 0.9rem;
+    color: #dcdcff;
+    font-style: italic;
+    text-align: center;
+    padding: 20px;
   }
 
   .typo-showcase {
-    margin-bottom: 40px;
+    margin-bottom: 30px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 16px;
     align-items: center;
   }
 
   .font-display {
-    padding: 20px;
+    padding: 16px 24px;
     background: rgba(255,255,255,0.05);
     border: 3px solid rgba(255,255,255,0.3);
     border-radius: 8px;
-    min-width: 300px;
+    min-width: 250px;
     text-align: center;
   }
 
   .font-label {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     color: #ffffff;
     display: block;
     font-weight: 600;
@@ -468,9 +463,10 @@ const nomsTypo = (projet.noms_typographie ?? '').split('\n').filter(t => t.trim(
 
   .demo-gallery {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 30px;
-    margin-bottom: 40px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    max-width: 700px;
+    margin: 0 auto;
   }
 
   .demo-item {
@@ -492,26 +488,18 @@ const nomsTypo = (projet.noms_typographie ?? '').split('\n').filter(t => t.trim(
     display: block;
   }
 
-  .no-content {
-    font-size: 0.9rem;
-    color: #dcdcff;
-    font-style: italic;
-    text-align: center;
-    padding: 40px 20px;
-  }
-
   .credits-footer {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 40px;
-    margin-top: 50px;
+    gap: 30px;
+    margin-top: 40px;
     flex-wrap: wrap;
   }
 
   .manolia-avatar {
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
     overflow: hidden;
     background: #ffffff;
@@ -530,12 +518,12 @@ const nomsTypo = (projet.noms_typographie ?? '').split('\n').filter(t => t.trim(
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    padding: 14px 24px;
+    padding: 12px 20px;
     background: #ffffff;
     color: #141a7b;
     border: 3px solid #ffffff;
     font-family: 'Press Start 2P', monospace;
-    font-size: 0.65rem;
+    font-size: 0.6rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     text-decoration: none;
@@ -559,12 +547,8 @@ const nomsTypo = (projet.noms_typographie ?? '').split('\n').filter(t => t.trim(
       padding: 120px 20px 80px;
     }
 
-    .section-content {
-      max-height: calc(100vh - 240px);
-    }
-
-    .project-title {
-      font-size: 1.2rem;
+    .project-visual {
+      max-width: 100%;
     }
 
     .demo-gallery {
@@ -573,7 +557,7 @@ const nomsTypo = (projet.noms_typographie ?? '').split('\n').filter(t => t.trim(
 
     .credits-footer {
       flex-direction: column;
-      gap: 25px;
+      gap: 20px;
     }
   }
 </style>
