@@ -1,5 +1,5 @@
 ---
-import Layout from '../../layouts/Layout.astro';
+import ProjectLayout from '../../layouts/ProjectLayout.astro';
 import Header from '../../components/Header.astro';
 import pb from '../../utils/pb';
 
@@ -7,7 +7,6 @@ export const prerender = false;
 
 const { id } = Astro.params;
 
-// Récupérer le projet directement par son ID
 let projet;
 try {
   projet = await pb.collection('projets').getOne(id || '');
@@ -17,25 +16,22 @@ try {
   return Astro.redirect('/portfolio');
 }
 
-// Images avec protection
 const imageUrl = projet.image ? pb.files.getURL(projet, projet.image) : null;
 const couleursImageUrl = projet.couleurs_image ? pb.files.getURL(projet, projet.couleurs_image) : null;
 const demo1Url = projet.demo1 ? pb.files.getURL(projet, projet.demo1) : null;
 const demo2Url = projet.demo2 ? pb.files.getURL(projet, projet.demo2) : null;
 const demo3Url = projet.demo3 ? pb.files.getURL(projet, projet.demo3) : null;
 
-// Textes
 const description = (projet.description ?? '').split('\n');
 const couleurs = (projet.couleurs ?? '').split('\n');
 const typographie = (projet.typographie ?? '').split('\n');
 const credits = (projet.credits ?? '').split('\n');
-
-// Noms des typographies
 const nomsTypo = (projet.noms_typographie ?? '').split('\n').filter((t: string) => t.trim());
 ---
 
-<Layout title={`${projet.titre} - Manolia Kocaoglu`}>
-  <Header  />
+<ProjectLayout title={`${projet.titre} - Manolia Kocaoglu`}>
+  <Header />
+  
   <div class="grid-bg"></div>
   
   <div class="pixel-decorations">
@@ -44,10 +40,8 @@ const nomsTypo = (projet.noms_typographie ?? '').split('\n').filter((t: string) 
     <div class="pixel-cross" style="top: 15%; right: 20%;"></div>
     <div class="pixel-plus" style="bottom: 40%; left: 5%;"></div>
   </div>
-
   
   <div class="project-container">
-    <!-- Dots de navigation -->
     <div class="nav-dots">
       <button class="dot active" data-section="0"></button>
       <button class="dot" data-section="1"></button>
@@ -56,7 +50,6 @@ const nomsTypo = (projet.noms_typographie ?? '').split('\n').filter((t: string) 
       <button class="dot" data-section="4"></button>
     </div>
 
-    <!-- Sections fullscreen -->
     <div class="sections-wrapper">
       <!-- Section 1: Présentation -->
       <section class="section active" data-index="0">
@@ -90,8 +83,8 @@ const nomsTypo = (projet.noms_typographie ?? '').split('\n').filter((t: string) 
             <h2>HARMONIE COLORÉE</h2>
             
             {couleursImageUrl ? (
-              <div class="colors-image" style="max-width: 300px;">
-                <img src={couleursImageUrl} alt="Palette de couleurs" style="width: 100%; height: auto;" />
+              <div class="colors-image">
+                <img src={couleursImageUrl} alt="Palette de couleurs" />
               </div>
             ) : (
               <p class="no-content">Aucune palette de couleurs disponible</p>
@@ -197,124 +190,10 @@ const nomsTypo = (projet.noms_typographie ?? '').split('\n').filter((t: string) 
       </section>
     </div>
   </div>
-</Layout>
+</ProjectLayout>
 
 <style>
-
-.grid-bg {
-  position: fixed;
-  inset: 0;
-  background-image: 
-    linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
-  background-size: 60px 60px;
-  opacity: 0.7;
-  z-index: 0;
-}
-
-.pixel-decorations {
-  position: fixed;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-}
-
-.pixel-shape,
-.pixel-cross,
-.pixel-plus {
-  position: absolute;
-  width: 18px;
-  height: 18px;
-  background: rgba(255, 255, 255, 0.15);
-  animation: float 3s ease-in-out infinite;
-}
-
-.pixel-cross {
-  background:
-    linear-gradient(rgba(255,255,255,0.25) 5px, transparent 5px, transparent 11px, rgba(255,255,255,0.25) 11px),
-    linear-gradient(90deg, rgba(255,255,255,0.25) 5px, transparent 5px, transparent 11px, rgba(255,255,255,0.25) 11px);
-}
-
-.pixel-plus {
-  clip-path: polygon(40% 0%, 60% 0%, 60% 40%, 100% 40%, 100% 60%, 60% 60%, 60% 100%, 40% 100%, 40% 60%, 0% 60%, 0% 40%, 40% 40%);
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0); opacity: 0.7; }
-  50% { transform: translateY(-10px); opacity: 1; }
-}
-
-  .project-container {
-    width: 100vw;
-    height: 100vh;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .nav-dots {
-    position: fixed;
-    top: 50%;
-    right: 40px;
-    transform: translateY(-50%);
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    z-index: 100;
-  }
-
-  .dot {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.3);
-    border: 2px solid #ffffff;
-    cursor: pointer;
-    transition: all 0.3s;
-    padding: 0;
-  }
-
-  .dot.active {
-    background: #ffffff;
-    transform: scale(1.4);
-  }
-
-  .dot:hover {
-    background: rgba(255,255,255,0.6);
-    transform: scale(1.2);
-  }
-
-  .sections-wrapper {
-    width: 100%;
-    height: 100%;
-    position: relative;
-  }
-
-  .section {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 120px 40px 80px;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.6s ease, visibility 0.6s;
-  }
-
-  .section.active {
-    opacity: 1;
-    visibility: visible;
-    z-index: 2;
-  }
-
-  .section-content {
-    max-width: 1200px;
-    width: 100%;
-    margin: 0 auto;
-  }
-
+  /* Styles spécifiques à la page projet */
   .project-hero {
     text-align: center;
   }
@@ -373,24 +252,8 @@ const nomsTypo = (projet.noms_typographie ?? '').split('\n').filter((t: string) 
     margin-bottom: 10px;
   }
 
-  .colors-section,
-  .typo-section,
-  .demo-section,
-  .credits-section {
-    text-align: center;
-  }
-
-  h2 {
-    font-family: 'Press Start 2P', monospace;
-    font-size: clamp(1.5rem, 3vw, 2.5rem);
-    color: #ffffff;
-    margin-bottom: 40px;
-    text-shadow: 3px 3px 0 rgba(0,0,0,0.3);
-    letter-spacing: 0.1em;
-  }
-
   .colors-image {
-    max-width: 600px;
+    max-width: 300px;
     margin: 0 auto 40px;
     border: 4px solid #ffffff;
     box-shadow: 6px 6px 0 0 rgba(0,0,0,0.3);
@@ -402,13 +265,6 @@ const nomsTypo = (projet.noms_typographie ?? '').split('\n').filter((t: string) 
     width: 100%;
     height: auto;
     display: block;
-  }
-
-  .no-content {
-    font-size: 0.9rem;
-    color: #dcdcff;
-    font-style: italic;
-    margin: 20px 0;
   }
 
   .typo-showcase {
@@ -456,109 +312,6 @@ const nomsTypo = (projet.noms_typographie ?? '').split('\n').filter((t: string) 
     height: auto;
     display: block;
   }
-
-  .section-text {
-    max-width: 700px;
-    margin: 0 auto;
-    font-size: 0.9rem;
-    line-height: 1.8;
-    color: #f5f5ff;
-  }
-
-  .section-text p {
-    margin-bottom: 12px;
-  }
-
-  .credits-footer {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 40px;
-    margin-top: 50px;
-  }
-
-  .manolia-avatar {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    overflow: hidden;
-    background: #ffffff;
-    border: 4px solid #522546;
-    box-shadow: 4px 4px 0 0 rgba(0,0,0,0.3);
-  }
-
-  .manolia-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .cta-button {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 14px 24px;
-    background: #ffffff;
-    color: #141a7b;
-    border: 3px solid #ffffff;
-    font-family: 'Press Start 2P', monospace;
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    text-decoration: none;
-    cursor: pointer;
-    box-shadow: 5px 5px 0 0 #141a7b;
-    transition: all 0.2s;
-  }
-
-  .cta-button:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: 7px 7px 0 0 #141a7b;
-  }
-
-  .scroll-indicator {
-    position: absolute;
-    bottom: 40px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: transparent;
-    border: none;
-    color: #ffffff;
-    font-size: 2rem;
-    cursor: pointer;
-    animation: bounce 2s ease-in-out infinite;
-    z-index: 10;
-    padding: 0;
-  }
-
-  @keyframes bounce {
-    0%, 100% { transform: translateX(-50%) translateY(0); }
-    50% { transform: translateX(-50%) translateY(10px); }
-  }
-
-  .scroll-indicator:hover {
-    color: #ffd700;
-  }
-
-  @media (max-width: 768px) {
-    .project-nav {
-      padding: 20px;
-    }
-
-    .section {
-      padding: 100px 30px 60px;
-    }
-
-    .color-box {
-      width: 60px;
-      height: 60px;
-    }
-
-    .credits-footer {
-      flex-direction: column;
-      gap: 30px;
-    }
-  }
 </style>
 
 <script>
@@ -578,7 +331,6 @@ const nomsTypo = (projet.noms_typographie ?? '').split('\n').filter((t: string) 
     dots[currentSection].classList.add('active');
   }
 
-  // Navigation par les flèches du clavier
   document.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
       goToSection(currentSection + 1);
@@ -587,14 +339,12 @@ const nomsTypo = (projet.noms_typographie ?? '').split('\n').filter((t: string) 
     }
   });
 
-  // Navigation par les dots
   dots.forEach((dot, index) => {
     dot.addEventListener('click', () => {
       goToSection(index);
     });
   });
 
-  // Navigation par les indicateurs de scroll
   document.querySelectorAll('.scroll-indicator').forEach((indicator) => {
     indicator.addEventListener('click', () => {
       const nextIndex = parseInt(indicator.getAttribute('data-next') || '0');
@@ -602,29 +352,22 @@ const nomsTypo = (projet.noms_typographie ?? '').split('\n').filter((t: string) 
     });
   });
 
-  // Navigation par scroll de la souris (améliorée)
   let isScrolling = false;
   let scrollTimeout: number;
   
   document.addEventListener('wheel', (e) => {
     if (isScrolling) return;
-    
-    // Empêcher le scroll par défaut
     e.preventDefault();
     
-    // Détecter la direction avec un seuil
     if (Math.abs(e.deltaY) > 10) {
       isScrolling = true;
       
       if (e.deltaY > 0) {
-        // Scroll vers le bas
         goToSection(currentSection + 1);
       } else {
-        // Scroll vers le haut
         goToSection(currentSection - 1);
       }
       
-      // Débloquer après un délai
       clearTimeout(scrollTimeout);
       scrollTimeout = setTimeout(() => {
         isScrolling = false;
@@ -632,7 +375,6 @@ const nomsTypo = (projet.noms_typographie ?? '').split('\n').filter((t: string) 
     }
   }, { passive: false });
 
-  // Navigation tactile pour mobile
   let touchStartY = 0;
   document.addEventListener('touchstart', (e) => {
     touchStartY = e.touches[0].clientY;
