@@ -10,7 +10,6 @@ const { id } = Astro.params;
 let projet;
 try {
   projet = await pb.collection('projets').getOne(id || '');
-  console.log('✅ Projet récupéré:', projet.titre);
 } catch (error) {
   console.error('❌ Erreur:', error);
   return Astro.redirect('/portfolio');
@@ -22,15 +21,15 @@ const demo1Url = projet.demo1 ? pb.files.getURL(projet, projet.demo1) : null;
 const demo2Url = projet.demo2 ? pb.files.getURL(projet, projet.demo2) : null;
 const demo3Url = projet.demo3 ? pb.files.getURL(projet, projet.demo3) : null;
 
-const description = (projet.description ?? '').split('\n');
-const couleurs = (projet.couleurs ?? '').split('\n');
-const typographie = (projet.typographie ?? '').split('\n');
-const credits = (projet.credits ?? '').split('\n');
-const nomsTypo = (projet.noms_typographie ?? '').split('\n').filter((t: string) => t.trim());
+const description = (projet.description ?? '').split('\n').filter(p => p.trim());
+const couleurs = (projet.couleurs ?? '').split('\n').filter(p => p.trim());
+const typographie = (projet.typographie ?? '').split('\n').filter(p => p.trim());
+const credits = (projet.credits ?? '').split('\n').filter(p => p.trim());
+const nomsTypo = (projet.noms_typographie ?? '').split('\n').filter(t => t.trim());
 ---
 
 <ProjectLayout title={`${projet.titre} - Manolia Kocaoglu`}>
-  <Header />
+  <Header currentPage="portfolio" />
   
   <div class="grid-bg"></div>
   
@@ -53,24 +52,22 @@ const nomsTypo = (projet.noms_typographie ?? '').split('\n').filter((t: string) 
     <div class="sections-wrapper">
       <!-- Section 1: Présentation -->
       <section class="section active" data-index="0">
-        <div class="section-content">
+        <div class="section-content presentation-section">
           <div class="project-hero">
             <h1 class="project-title">{projet.titre}</h1>
             {projet.sous_titre && <p class="project-subtitle">{projet.sous_titre}</p>}
             
-            <div class="project-visual">
-              {imageUrl ? (
+            {imageUrl && (
+              <div class="project-visual">
                 <img src={imageUrl} alt={projet.titre} />
-              ) : (
-                <div class="visual-fallback">
-                  <span>Mockup à venir</span>
-                </div>
-              )}
-            </div>
+              </div>
+            )}
             
-            <div class="project-description">
-              {description.map((p: string) => p && <p>{p}</p>)}
-            </div>
+            {description.length > 0 && (
+              <div class="project-description">
+                {description.map((p) => <p>{p}</p>)}
+              </div>
+            )}
           </div>
         </div>
         <button class="scroll-indicator" data-next="1">↓</button>
@@ -80,19 +77,21 @@ const nomsTypo = (projet.noms_typographie ?? '').split('\n').filter((t: string) 
       <section class="section" data-index="1">
         <div class="section-content">
           <div class="colors-section">
-            <h2>HARMONIE COLORÉE</h2>
+            <h2>🎨 HARMONIE COLORÉE</h2>
             
-            {couleursImageUrl ? (
+            {couleursImageUrl && (
               <div class="colors-image">
                 <img src={couleursImageUrl} alt="Palette de couleurs" />
               </div>
-            ) : (
-              <p class="no-content">Aucune palette de couleurs disponible</p>
             )}
             
-            <div class="section-text">
-              {couleurs.map((p: string) => p && <p>{p}</p>)}
-            </div>
+            {couleurs.length > 0 ? (
+              <div class="section-text">
+                {couleurs.map((p) => <p>{p}</p>)}
+              </div>
+            ) : (
+              <p class="no-content">Aucune description de couleurs disponible</p>
+            )}
           </div>
         </div>
         <button class="scroll-indicator" data-next="2">↓</button>
@@ -102,23 +101,25 @@ const nomsTypo = (projet.noms_typographie ?? '').split('\n').filter((t: string) 
       <section class="section" data-index="2">
         <div class="section-content">
           <div class="typo-section">
-            <h2>TYPOGRAPHIE</h2>
+            <h2>✍️ TYPOGRAPHIE</h2>
             
-            <div class="typo-showcase">
-              {nomsTypo.length > 0 ? (
-                nomsTypo.map((typo: string) => (
+            {nomsTypo.length > 0 && (
+              <div class="typo-showcase">
+                {nomsTypo.map((typo) => (
                   <div class="font-display">
                     <span class="font-label">{typo}</span>
                   </div>
-                ))
-              ) : (
-                <p class="no-content">Aucune typographie spécifiée</p>
-              )}
-            </div>
+                ))}
+              </div>
+            )}
             
-            <div class="section-text">
-              {typographie.map((p: string) => p && <p>{p}</p>)}
-            </div>
+            {typographie.length > 0 ? (
+              <div class="section-text">
+                {typographie.map((p) => <p>{p}</p>)}
+              </div>
+            ) : (
+              <p class="no-content">Aucune description typographique disponible</p>
+            )}
           </div>
         </div>
         <button class="scroll-indicator" data-next="3">↓</button>
@@ -128,28 +129,29 @@ const nomsTypo = (projet.noms_typographie ?? '').split('\n').filter((t: string) 
       <section class="section" data-index="3">
         <div class="section-content">
           <div class="demo-section">
-            <h2>DÉMONSTRATIONS</h2>
+            <h2>📱 DÉMONSTRATIONS</h2>
             
-            <div class="demo-gallery">
-              {demo1Url && (
-                <div class="demo-item">
-                  <img src={demo1Url} alt="Démo 1" />
-                </div>
-              )}
-              {demo2Url && (
-                <div class="demo-item">
-                  <img src={demo2Url} alt="Démo 2" />
-                </div>
-              )}
-              {demo3Url && (
-                <div class="demo-item">
-                  <img src={demo3Url} alt="Démo 3" />
-                </div>
-              )}
-              {!demo1Url && !demo2Url && !demo3Url && (
-                <p class="no-content">Aucune démonstration disponible pour ce projet</p>
-              )}
-            </div>
+            {(demo1Url || demo2Url || demo3Url) ? (
+              <div class="demo-gallery">
+                {demo1Url && (
+                  <div class="demo-item">
+                    <img src={demo1Url} alt="Démo 1" />
+                  </div>
+                )}
+                {demo2Url && (
+                  <div class="demo-item">
+                    <img src={demo2Url} alt="Démo 2" />
+                  </div>
+                )}
+                {demo3Url && (
+                  <div class="demo-item">
+                    <img src={demo3Url} alt="Démo 3" />
+                  </div>
+                )}
+              </div>
+            ) : (
+              <p class="no-content">Aucune démonstration disponible pour ce projet</p>
+            )}
           </div>
         </div>
         <button class="scroll-indicator" data-next="4">↓</button>
@@ -159,11 +161,15 @@ const nomsTypo = (projet.noms_typographie ?? '').split('\n').filter((t: string) 
       <section class="section" data-index="4">
         <div class="section-content">
           <div class="credits-section">
-            <h2>CRÉDITS</h2>
+            <h2>✨ CRÉDITS</h2>
             
-            <div class="section-text">
-              {credits.map((p: string) => p && <p>{p}</p>)}
-            </div>
+            {credits.length > 0 ? (
+              <div class="section-text">
+                {credits.map((p) => <p>{p}</p>)}
+              </div>
+            ) : (
+              <p class="no-content">Projet personnel réalisé par Manolia Kocaoglu</p>
+            )}
             
             <div class="credits-footer">
               <div class="manolia-avatar">
@@ -173,14 +179,14 @@ const nomsTypo = (projet.noms_typographie ?? '').split('\n').filter((t: string) 
                 <a href={projet.lien} target="_blank" class="cta-button">
                   <span>VOIR LE PROJET</span>
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path d="M5 12h14M12 5l7 7-7 7" stroke-width="2" stroke-linecap="round" />
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
                 </a>
               ) : (
                 <a href="/portfolio" class="cta-button">
-                  <span>RETOUR AU PORTFOLIO</span>
+                  <span>RETOUR PORTFOLIO</span>
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path d="M5 12h14M12 5l7 7-7 7" stroke-width="2" stroke-linecap="round" />
+                    <path d="M19 12H5M12 19l-7-7 7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
                 </a>
               )}
@@ -193,67 +199,223 @@ const nomsTypo = (projet.noms_typographie ?? '').split('\n').filter((t: string) 
 </ProjectLayout>
 
 <style>
-  /* Styles spécifiques à la page projet */
+  .grid-bg {
+    position: fixed;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+    background-size: 60px 60px;
+    opacity: 0.7;
+    z-index: 0;
+  }
+
+  .pixel-decorations {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .pixel-shape,
+  .pixel-cross,
+  .pixel-plus {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background: rgba(255, 255, 255, 0.15);
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .pixel-cross {
+    background:
+      linear-gradient(rgba(255,255,255,0.25) 5px, transparent 5px, transparent 11px, rgba(255,255,255,0.25) 11px),
+      linear-gradient(90deg, rgba(255,255,255,0.25) 5px, transparent 5px, transparent 11px, rgba(255,255,255,0.25) 11px);
+  }
+
+  .pixel-plus {
+    clip-path: polygon(40% 0%, 60% 0%, 60% 40%, 100% 40%, 100% 60%, 60% 60%, 60% 100%, 40% 100%, 40% 60%, 0% 60%, 0% 40%, 40% 40%);
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); opacity: 0.7; }
+    50% { transform: translateY(-10px); opacity: 1; }
+  }
+
+  .project-container {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .nav-dots {
+    position: fixed;
+    top: 50%;
+    right: 40px;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    z-index: 100;
+  }
+
+  .dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+    border: 2px solid #ffffff;
+    cursor: pointer;
+    transition: all 0.3s;
+    padding: 0;
+  }
+
+  .dot.active {
+    background: #ffffff;
+    transform: scale(1.4);
+  }
+
+  .dot:hover {
+    background: rgba(255,255,255,0.6);
+    transform: scale(1.2);
+  }
+
+  .sections-wrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+  }
+
+  .section {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 140px 40px 100px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.6s ease, visibility 0.6s;
+  }
+
+  .section.active {
+    opacity: 1;
+    visibility: visible;
+    z-index: 2;
+  }
+
+  .section-content {
+    max-width: 1000px;
+    width: 100%;
+    margin: 0 auto;
+    max-height: calc(100vh - 280px);
+    overflow-y: auto;
+    padding-right: 10px;
+  }
+
+  .section-content::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .section-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+  }
+
+  .section-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 4px;
+  }
+
+  .scroll-indicator {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 2.5rem;
+    cursor: pointer;
+    animation: bounce 2s ease-in-out infinite;
+    z-index: 10;
+    padding: 0;
+    line-height: 1;
+  }
+
+  .scroll-indicator:hover {
+    color: #ffd700;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(10px); }
+  }
+
+  h2 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+    color: #ffffff;
+    margin-bottom: 40px;
+    text-shadow: 3px 3px 0 rgba(0,0,0,0.3);
+    letter-spacing: 0.08em;
+    text-align: center;
+  }
+
   .project-hero {
     text-align: center;
   }
 
   .project-title {
     font-family: 'Press Start 2P', monospace;
-    font-size: clamp(1.2rem, 3vw, 2.5rem);
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
     color: #ffffff;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
     text-shadow: 4px 4px 0 rgba(0,0,0,0.3);
     letter-spacing: 0.1em;
+    line-height: 1.4;
   }
 
   .project-subtitle {
-    font-size: 0.75rem;
+    font-size: 0.9rem;
     color: #dcdcff;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
+    letter-spacing: 0.05em;
   }
 
   .project-visual {
-    max-width: 500px;
-    max-height: 250px;
-    margin: 0 auto 20px;
+    max-width: 600px;
+    margin: 0 auto 30px;
     border: 4px solid #ffffff;
     box-shadow: 8px 8px 0 0 rgba(0,0,0,0.3);
     background: #05060f;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     overflow: hidden;
   }
 
   .project-visual img {
     width: 100%;
-    height: 100%;
-    object-fit: contain;
-  }
-
-  .visual-fallback {
-    font-size: 1rem;
-    color: #666;
-    font-family: system-ui, sans-serif;
+    height: auto;
+    display: block;
   }
 
   .project-description {
-    max-width: 600px;
+    max-width: 700px;
     margin: 0 auto;
-    font-size: 0.75rem;
-    line-height: 1.6;
+    font-size: 0.85rem;
+    line-height: 1.8;
     color: #f5f5ff;
-    max-height: 150px;
-    overflow-y: auto;
+    text-align: left;
   }
 
   .project-description p {
-    margin-bottom: 10px;
+    margin-bottom: 15px;
   }
 
   .colors-image {
-    max-width: 300px;
+    max-width: 400px;
     margin: 0 auto 40px;
     border: 4px solid #ffffff;
     box-shadow: 6px 6px 0 0 rgba(0,0,0,0.3);
@@ -267,6 +429,19 @@ const nomsTypo = (projet.noms_typographie ?? '').split('\n').filter((t: string) 
     display: block;
   }
 
+  .section-text {
+    max-width: 700px;
+    margin: 0 auto;
+    font-size: 0.85rem;
+    line-height: 1.8;
+    color: #f5f5ff;
+    text-align: left;
+  }
+
+  .section-text p {
+    margin-bottom: 15px;
+  }
+
   .typo-showcase {
     margin-bottom: 40px;
     display: flex;
@@ -276,11 +451,16 @@ const nomsTypo = (projet.noms_typographie ?? '').split('\n').filter((t: string) 
   }
 
   .font-display {
-    margin-bottom: 10px;
+    padding: 20px;
+    background: rgba(255,255,255,0.05);
+    border: 3px solid rgba(255,255,255,0.3);
+    border-radius: 8px;
+    min-width: 300px;
+    text-align: center;
   }
 
   .font-label {
-    font-size: 1.2rem;
+    font-size: 1.5rem;
     color: #ffffff;
     display: block;
     font-weight: 600;
@@ -288,10 +468,9 @@ const nomsTypo = (projet.noms_typographie ?? '').split('\n').filter((t: string) 
 
   .demo-gallery {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 30px;
-    max-width: 1000px;
-    margin: 0 auto 40px;
+    margin-bottom: 40px;
   }
 
   .demo-item {
@@ -311,6 +490,91 @@ const nomsTypo = (projet.noms_typographie ?? '').split('\n').filter((t: string) 
     width: 100%;
     height: auto;
     display: block;
+  }
+
+  .no-content {
+    font-size: 0.9rem;
+    color: #dcdcff;
+    font-style: italic;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .credits-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 50px;
+    flex-wrap: wrap;
+  }
+
+  .manolia-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #ffffff;
+    border: 4px solid #ffffff;
+    box-shadow: 4px 4px 0 0 rgba(0,0,0,0.3);
+  }
+
+  .manolia-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.4);
+  }
+
+  .cta-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 24px;
+    background: #ffffff;
+    color: #141a7b;
+    border: 3px solid #ffffff;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    cursor: pointer;
+    box-shadow: 5px 5px 0 0 rgba(0,0,0,0.3);
+    transition: all 0.2s;
+  }
+
+  .cta-button:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 7px 7px 0 0 rgba(0,0,0,0.4);
+    background: #ffd700;
+  }
+
+  @media (max-width: 768px) {
+    .nav-dots {
+      right: 20px;
+    }
+
+    .section {
+      padding: 120px 20px 80px;
+    }
+
+    .section-content {
+      max-height: calc(100vh - 240px);
+    }
+
+    .project-title {
+      font-size: 1.2rem;
+    }
+
+    .demo-gallery {
+      grid-template-columns: 1fr;
+    }
+
+    .credits-footer {
+      flex-direction: column;
+      gap: 25px;
+    }
   }
 </style>
 

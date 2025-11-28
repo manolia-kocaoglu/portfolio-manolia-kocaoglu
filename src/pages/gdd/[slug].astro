@@ -10,7 +10,6 @@ const { slug } = Astro.params;
 let gdd;
 try {
   gdd = await pb.collection('gdd').getOne(slug || '');
-  console.log('✅ GDD récupéré:', gdd.titre);
 } catch (error) {
   console.error('❌ Erreur:', error);
   return Astro.redirect('/portfolio');
@@ -19,10 +18,10 @@ try {
 const imageUrl = gdd.image ? pb.files.getURL(gdd, gdd.image) : null;
 const illustrationUrl = gdd.illustration ? pb.files.getURL(gdd, gdd.illustration) : null;
 
-const description = (gdd.description ?? '').split('\n');
-const univers = (gdd.univers_lore ?? '').split('\n');
-const gameplay = (gdd.gameplay_systeme ?? '').split('\n');
-const credits = (gdd.credits ?? '').split('\n');
+const description = (gdd.description ?? '').split('\n').filter(p => p.trim());
+const univers = (gdd.univers_lore ?? '').split('\n').filter(p => p.trim());
+const gameplay = (gdd.gameplay_systeme ?? '').split('\n').filter(p => p.trim());
+const credits = (gdd.credits ?? '').split('\n').filter(p => p.trim());
 ---
 
 <ProjectLayout title={`${gdd.titre} - Manolia Kocaoglu`}>
@@ -59,13 +58,15 @@ const credits = (gdd.credits ?? '').split('\n');
             <h1 class="game-title">{gdd.titre}</h1>
             {gdd.sous_titre && <p class="game-subtitle">{gdd.sous_titre}</p>}
             
-            <div class="game-description">
-              {description.map((p: string) => p && <p>{p}</p>)}
-            </div>
+            {description.length > 0 && (
+              <div class="game-description">
+                {description.map((p) => <p>{p}</p>)}
+              </div>
+            )}
 
             {illustrationUrl && (
               <div class="illustration-preview">
-                <img src={illustrationUrl} alt="Illustration" />
+                <img src={illustrationUrl} alt="Illustration du jeu" />
               </div>
             )}
           </div>
@@ -78,9 +79,13 @@ const credits = (gdd.credits ?? '').split('\n');
         <div class="section-content">
           <div class="content-section">
             <h2>🌙 UNIVERS & LORE</h2>
-            <div class="section-text">
-              {univers.map((p: string) => p && <p>{p}</p>)}
-            </div>
+            {univers.length > 0 ? (
+              <div class="section-text">
+                {univers.map((p) => <p>{p}</p>)}
+              </div>
+            ) : (
+              <p class="no-content">Univers en cours de développement</p>
+            )}
           </div>
         </div>
         <button class="scroll-indicator" data-next="2">↓</button>
@@ -91,9 +96,13 @@ const credits = (gdd.credits ?? '').split('\n');
         <div class="section-content">
           <div class="content-section">
             <h2>🎮 GAMEPLAY & SYSTÈME</h2>
-            <div class="section-text">
-              {gameplay.map((p: string) => p && <p>{p}</p>)}
-            </div>
+            {gameplay.length > 0 ? (
+              <div class="section-text">
+                {gameplay.map((p) => <p>{p}</p>)}
+              </div>
+            ) : (
+              <p class="no-content">Mécaniques de jeu en cours de conception</p>
+            )}
           </div>
         </div>
         <button class="scroll-indicator" data-next="3">↓</button>
@@ -104,18 +113,22 @@ const credits = (gdd.credits ?? '').split('\n');
         <div class="section-content">
           <div class="content-section">
             <h2>✨ CRÉDITS</h2>
-            <div class="section-text">
-              {credits.map((p: string) => p && <p>{p}</p>)}
-            </div>
+            {credits.length > 0 ? (
+              <div class="section-text">
+                {credits.map((p) => <p>{p}</p>)}
+              </div>
+            ) : (
+              <p class="no-content">Game Design Document réalisé par Manolia Kocaoglu</p>
+            )}
             
             <div class="credits-footer">
               <div class="manolia-avatar">
                 <img src="/manolia.svg" alt="Manolia" />
               </div>
               <a href="/portfolio" class="cta-button">
-                <span>RETOUR AU PORTFOLIO</span>
+                <span>RETOUR PORTFOLIO</span>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                  <path d="M5 12h14M12 5l7 7-7 7" stroke-width="2" stroke-linecap="round" />
+                  <path d="M19 12H5M12 19l-7-7 7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
               </a>
             </div>
@@ -127,7 +140,172 @@ const credits = (gdd.credits ?? '').split('\n');
 </ProjectLayout>
 
 <style>
-  /* Styles spécifiques à la page GDD */
+  .grid-bg {
+    position: fixed;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+    background-size: 60px 60px;
+    opacity: 0.7;
+    z-index: 0;
+  }
+
+  .pixel-decorations {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .pixel-shape,
+  .pixel-cross,
+  .pixel-plus {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background: rgba(255, 255, 255, 0.15);
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .pixel-cross {
+    background:
+      linear-gradient(rgba(255,255,255,0.25) 5px, transparent 5px, transparent 11px, rgba(255,255,255,0.25) 11px),
+      linear-gradient(90deg, rgba(255,255,255,0.25) 5px, transparent 5px, transparent 11px, rgba(255,255,255,0.25) 11px);
+  }
+
+  .pixel-plus {
+    clip-path: polygon(40% 0%, 60% 0%, 60% 40%, 100% 40%, 100% 60%, 60% 60%, 60% 100%, 40% 100%, 40% 60%, 0% 60%, 0% 40%, 40% 40%);
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); opacity: 0.7; }
+    50% { transform: translateY(-10px); opacity: 1; }
+  }
+
+  .project-container {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .nav-dots {
+    position: fixed;
+    top: 50%;
+    right: 40px;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    z-index: 100;
+  }
+
+  .dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+    border: 2px solid #ffffff;
+    cursor: pointer;
+    transition: all 0.3s;
+    padding: 0;
+  }
+
+  .dot.active {
+    background: #ffffff;
+    transform: scale(1.4);
+  }
+
+  .dot:hover {
+    background: rgba(255,255,255,0.6);
+    transform: scale(1.2);
+  }
+
+  .sections-wrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+  }
+
+  .section {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 140px 40px 100px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.6s ease, visibility 0.6s;
+  }
+
+  .section.active {
+    opacity: 1;
+    visibility: visible;
+    z-index: 2;
+  }
+
+  .section-content {
+    max-width: 1000px;
+    width: 100%;
+    margin: 0 auto;
+    max-height: calc(100vh - 280px);
+    overflow-y: auto;
+    padding-right: 10px;
+  }
+
+  .section-content::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .section-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+  }
+
+  .section-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 4px;
+  }
+
+  .scroll-indicator {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 2.5rem;
+    cursor: pointer;
+    animation: bounce 2s ease-in-out infinite;
+    z-index: 10;
+    padding: 0;
+    line-height: 1;
+  }
+
+  .scroll-indicator:hover {
+    color: #ffd700;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(10px); }
+  }
+
+  h2 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+    color: #ffffff;
+    margin-bottom: 40px;
+    text-shadow: 3px 3px 0 rgba(0,0,0,0.3);
+    letter-spacing: 0.08em;
+    text-align: center;
+  }
+
   .hero-content {
     text-align: center;
   }
@@ -135,11 +313,12 @@ const credits = (gdd.credits ?? '').split('\n');
   .game-logo {
     width: 150px;
     height: 150px;
-    margin: 0 auto 25px;
+    margin: 0 auto 30px;
     border-radius: 50%;
     overflow: hidden;
     border: 4px solid #ffffff;
     box-shadow: 0 0 0 4px #111b9f, 6px 6px 0 4px rgba(0,0,0,0.4);
+    background: #ffffff;
   }
 
   .game-logo img {
@@ -155,35 +334,38 @@ const credits = (gdd.credits ?? '').split('\n');
     margin-bottom: 12px;
     text-shadow: 4px 4px 0 rgba(0,0,0,0.3);
     letter-spacing: 0.1em;
+    line-height: 1.4;
   }
 
   .game-subtitle {
     font-size: 0.9rem;
     color: #dcdcff;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
     letter-spacing: 0.05em;
   }
 
   .game-description {
-    font-size: 0.8rem;
-    line-height: 1.7;
+    font-size: 0.85rem;
+    line-height: 1.8;
     color: #f5f5ff;
-    margin-bottom: 25px;
+    margin-bottom: 30px;
     max-width: 700px;
     margin-left: auto;
     margin-right: auto;
+    text-align: left;
   }
 
   .game-description p {
-    margin-bottom: 10px;
+    margin-bottom: 15px;
   }
 
   .illustration-preview {
-    max-width: 500px;
+    max-width: 600px;
     margin: 0 auto;
     border: 4px solid #ffffff;
     box-shadow: 6px 6px 0 0 rgba(0,0,0,0.4);
     overflow: hidden;
+    background: #05060f;
   }
 
   .illustration-preview img {
@@ -196,10 +378,102 @@ const credits = (gdd.credits ?? '').split('\n');
     text-align: center;
   }
 
+  .section-text {
+    max-width: 700px;
+    margin: 0 auto;
+    font-size: 0.85rem;
+    line-height: 1.8;
+    color: #f5f5ff;
+    text-align: left;
+  }
+
+  .section-text p {
+    margin-bottom: 15px;
+  }
+
+  .no-content {
+    font-size: 0.9rem;
+    color: #dcdcff;
+    font-style: italic;
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .credits-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 50px;
+    flex-wrap: wrap;
+  }
+
+  .manolia-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #ffffff;
+    border: 4px solid #ffffff;
+    box-shadow: 4px 4px 0 0 rgba(0,0,0,0.3);
+  }
+
+  .manolia-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.4);
+  }
+
+  .cta-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 24px;
+    background: #ffffff;
+    color: #141a7b;
+    border: 3px solid #ffffff;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    cursor: pointer;
+    box-shadow: 5px 5px 0 0 rgba(0,0,0,0.3);
+    transition: all 0.2s;
+  }
+
+  .cta-button:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 7px 7px 0 0 rgba(0,0,0,0.4);
+    background: #ffd700;
+  }
+
   @media (max-width: 768px) {
+    .nav-dots {
+      right: 20px;
+    }
+
+    .section {
+      padding: 120px 20px 80px;
+    }
+
+    .section-content {
+      max-height: calc(100vh - 240px);
+    }
+
     .game-logo {
       width: 120px;
       height: 120px;
+    }
+
+    .game-title {
+      font-size: 1.2rem;
+    }
+
+    .credits-footer {
+      flex-direction: column;
+      gap: 25px;
     }
   }
 </style>
@@ -282,4 +556,4 @@ const credits = (gdd.credits ?? '').split('\n');
       }
     }
   });
-</script> 
+</script>
